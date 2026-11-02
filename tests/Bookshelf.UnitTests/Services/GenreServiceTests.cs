@@ -22,6 +22,19 @@ public sealed class GenreServiceTests : IDisposable
     public void Dispose() => database.Dispose();
 
     [Fact]
+    public async Task GetPage_SkipsAndCountsBooks()
+    {
+        var drama = database.AddGenre("Drama");
+        database.AddGenre("Dystopia");
+        database.AddBook(database.AddAuthor(), drama);
+
+        var page = await service.GetPageAsync(0, 1, Ct);
+
+        page.Total.Should().Be(2);
+        page.Items.Should().Equal(new GenreListDto(drama.Id, "Drama", 1));
+    }
+
+    [Fact]
     public async Task Create_DuplicateName_ReturnsValidationError()
     {
         database.AddGenre("Dystopia");

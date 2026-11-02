@@ -6,6 +6,8 @@ public interface IBookService
 {
     Task<IReadOnlyList<BookListDto>> GetAllAsync(BookFilter? filter = null, CancellationToken cancellationToken = default);
 
+    Task<PagedList<BookListDto>> GetPageAsync(int skip, int limit, CancellationToken cancellationToken = default);
+
     Task<Result<BookDetailsDto>> GetByIdAsync(int id, CancellationToken cancellationToken = default);
 
     Task<Result<int>> CreateAsync(CreateBookDto dto, CancellationToken cancellationToken = default);

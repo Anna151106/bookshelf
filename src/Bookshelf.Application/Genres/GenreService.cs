@@ -1,5 +1,6 @@
 using Bookshelf.Application.Abstractions;
 using Bookshelf.Application.Common;
+using Bookshelf.Domain.Entities;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,13 +13,14 @@ public class GenreService(
 {
     public async Task<IReadOnlyList<GenreListDto>> GetAllAsync(CancellationToken cancellationToken = default)
     {
-        var rows = await db.Genres
-            .AsNoTracking()
-            .OrderBy(g => g.Name)
-            .Select(g => new { Genre = g, BookCount = g.Books.Count })
-            .ToListAsync(cancellationToken);
-
+        var rows = await ListQuery().ToListAsync(cancellationToken);
         return rows.Select(r => r.Genre.ToListDto(r.BookCount)).ToList();
+    }
+
+    public async Task<PagedList<GenreListDto>> GetPageAsync(int skip, int limit, CancellationToken cancellationToken = default)
+    {
+        var page = await ListQuery().ToPagedListAsync(skip, limit, cancellationToken);
+        return page.Map(r => r.Genre.ToListDto(r.BookCount));
     }
 
     public async Task<Result<GenreDetailsDto>> GetByIdAsync(int id, CancellationToken cancellationToken = default)
@@ -86,6 +88,15 @@ public class GenreService(
 
         return Result.Success();
     }
+
+    private IQueryable<GenreRow> ListQuery() =>
+        db.Genres
+            .AsNoTracking()
+            .OrderBy(g => g.Name)
+            .ThenBy(g => g.Id)
+            .Select(g => new GenreRow(g, g.Books.Count));
+
+    private sealed record GenreRow(Genre Genre, int BookCount);
 
     private const string NotFoundMessage = "Жанр не знайдено.";
 }

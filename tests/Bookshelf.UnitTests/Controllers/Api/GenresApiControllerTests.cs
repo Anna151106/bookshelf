@@ -17,19 +17,20 @@ public class GenresApiControllerTests
 
     public GenresApiControllerTests()
     {
-        controller = new GenresApiController(service.Object);
+        controller = new GenresApiController(service.Object).WithRequest("/api/genres");
     }
 
     private static CancellationToken Ct => TestContext.Current.CancellationToken;
 
     [Fact]
-    public async Task GetAll_ReturnsGenres()
+    public async Task GetAll_LastPage_HasNoNextLink()
     {
-        service.Setup(s => s.GetAllAsync(Ct)).ReturnsAsync([new GenreListDto(3, "Dystopia", 2)]);
+        service.Setup(s => s.GetPageAsync(0, 10, Ct)).ReturnsAsync(new PagedList<GenreListDto>([new GenreListDto(3, "Dystopia", 2)], 1));
 
-        var result = await controller.GetAll(Ct);
+        var result = await controller.GetAll(new PageQuery(), Ct);
 
-        result.Should().ContainSingle().Which.Name.Should().Be("Dystopia");
+        result.Items.Should().ContainSingle().Which.Name.Should().Be("Dystopia");
+        result.NextLink.Should().BeNull();
     }
 
     [Fact]

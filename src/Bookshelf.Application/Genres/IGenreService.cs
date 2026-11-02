@@ -6,6 +6,8 @@ public interface IGenreService
 {
     Task<IReadOnlyList<GenreListDto>> GetAllAsync(CancellationToken cancellationToken = default);
 
+    Task<PagedList<GenreListDto>> GetPageAsync(int skip, int limit, CancellationToken cancellationToken = default);
+
     Task<Result<GenreDetailsDto>> GetByIdAsync(int id, CancellationToken cancellationToken = default);
 
     Task<Result<int>> CreateAsync(CreateGenreDto dto, CancellationToken cancellationToken = default);

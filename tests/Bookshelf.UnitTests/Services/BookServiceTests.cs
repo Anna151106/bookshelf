@@ -33,6 +33,19 @@ public sealed class BookServiceTests : IDisposable
     public void Dispose() => database.Dispose();
 
     [Fact]
+    public async Task GetPage_ReturnsSliceInStableOrder()
+    {
+        var first = database.AddBook(author, genre, "Same", "9780000000019");
+        var second = database.AddBook(author, genre, "Same", "9780000000026");
+        database.AddBook(author, genre, "Animal Farm", "9780000000033");
+
+        var page = await service.GetPageAsync(1, 2, Ct);
+
+        page.Total.Should().Be(3);
+        page.Items.Select(b => b.Id).Should().Equal(first.Id, second.Id);
+    }
+
+    [Fact]
     public async Task GetAll_FilterByGenre()
     {
         var sciFi = database.AddGenre("Science fiction");

@@ -24,6 +24,18 @@ public class ReviewService(
         return reviews.Select(r => r.ToDto(r.Book.Title)).ToList();
     }
 
+    public async Task<PagedList<ReviewDto>> GetPageAsync(int skip, int limit, CancellationToken cancellationToken = default)
+    {
+        var page = await db.Reviews
+            .AsNoTracking()
+            .Include(r => r.Book)
+            .OrderByDescending(r => r.CreatedAt)
+            .ThenByDescending(r => r.Id)
+            .ToPagedListAsync(skip, limit, cancellationToken);
+
+        return page.Map(r => r.ToDto(r.Book.Title));
+    }
+
     public async Task<Result<ReviewDto>> GetByIdAsync(int id, CancellationToken cancellationToken = default)
     {
         var review = await db.Reviews

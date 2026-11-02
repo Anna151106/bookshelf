@@ -17,19 +17,19 @@ public class ReviewsApiControllerTests
 
     public ReviewsApiControllerTests()
     {
-        controller = new ReviewsApiController(service.Object);
+        controller = new ReviewsApiController(service.Object).WithRequest("/api/reviews");
     }
 
     private static CancellationToken Ct => TestContext.Current.CancellationToken;
 
     [Fact]
-    public async Task GetAll_ReturnsReviews()
+    public async Task GetAll_ReturnsPage()
     {
-        service.Setup(s => s.GetAllAsync(null, Ct)).ReturnsAsync([Review]);
+        service.Setup(s => s.GetPageAsync(0, 10, Ct)).ReturnsAsync(new PagedList<ReviewDto>([Review], 1));
 
-        var result = await controller.GetAll(Ct);
+        var result = await controller.GetAll(new PageQuery(), Ct);
 
-        result.Should().Equal(Review);
+        result.Items.Should().Equal(Review);
     }
 
     [Fact]

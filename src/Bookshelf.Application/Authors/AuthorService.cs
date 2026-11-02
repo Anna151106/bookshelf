@@ -1,5 +1,6 @@
 using Bookshelf.Application.Abstractions;
 using Bookshelf.Application.Common;
+using Bookshelf.Domain.Entities;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,13 +13,14 @@ public class AuthorService(
 {
     public async Task<IReadOnlyList<AuthorListDto>> GetAllAsync(CancellationToken cancellationToken = default)
     {
-        var rows = await db.Authors
-            .AsNoTracking()
-            .OrderBy(a => a.FullName)
-            .Select(a => new { Author = a, BookCount = a.Books.Count })
-            .ToListAsync(cancellationToken);
-
+        var rows = await ListQuery().ToListAsync(cancellationToken);
         return rows.Select(r => r.Author.ToListDto(r.BookCount)).ToList();
+    }
+
+    public async Task<PagedList<AuthorListDto>> GetPageAsync(int skip, int limit, CancellationToken cancellationToken = default)
+    {
+        var page = await ListQuery().ToPagedListAsync(skip, limit, cancellationToken);
+        return page.Map(r => r.Author.ToListDto(r.BookCount));
     }
 
     public async Task<Result<AuthorDetailsDto>> GetByIdAsync(int id, CancellationToken cancellationToken = default)
@@ -86,6 +88,15 @@ public class AuthorService(
 
         return Result.Success();
     }
+
+    private IQueryable<AuthorRow> ListQuery() =>
+        db.Authors
+            .AsNoTracking()
+            .OrderBy(a => a.FullName)
+            .ThenBy(a => a.Id)
+            .Select(a => new AuthorRow(a, a.Books.Count));
+
+    private sealed record AuthorRow(Author Author, int BookCount);
 
     private const string NotFoundMessage = "Автора не знайдено.";
 }

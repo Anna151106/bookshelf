@@ -39,6 +39,19 @@ public class BookService(
         return books.Select(b => b.ToListDto()).ToList();
     }
 
+    public async Task<PagedList<BookListDto>> GetPageAsync(int skip, int limit, CancellationToken cancellationToken = default)
+    {
+        var page = await db.Books
+            .AsNoTracking()
+            .Include(b => b.Author)
+            .Include(b => b.Genre)
+            .OrderBy(b => b.Title)
+            .ThenBy(b => b.Id)
+            .ToPagedListAsync(skip, limit, cancellationToken);
+
+        return page.Map(b => b.ToListDto());
+    }
+
     public async Task<Result<BookDetailsDto>> GetByIdAsync(int id, CancellationToken cancellationToken = default)
     {
         var book = await db.Books

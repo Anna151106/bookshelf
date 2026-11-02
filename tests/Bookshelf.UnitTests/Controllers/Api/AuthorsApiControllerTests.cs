@@ -17,19 +17,22 @@ public class AuthorsApiControllerTests
 
     public AuthorsApiControllerTests()
     {
-        controller = new AuthorsApiController(service.Object);
+        controller = new AuthorsApiController(service.Object).WithRequest("/api/authors");
     }
 
     private static CancellationToken Ct => TestContext.Current.CancellationToken;
 
     [Fact]
-    public async Task GetAll_ReturnsAuthors()
+    public async Task GetAll_ReturnsRequestedPage()
     {
-        service.Setup(s => s.GetAllAsync(Ct)).ReturnsAsync([new AuthorListDto(1, "George Orwell", "UK", 1903, 2)]);
+        service.Setup(s => s.GetPageAsync(20, 10, Ct))
+            .ReturnsAsync(new PagedList<AuthorListDto>([new AuthorListDto(1, "George Orwell", "UK", 1903, 2)], 35));
 
-        var result = await controller.GetAll(Ct);
+        var result = await controller.GetAll(new PageQuery { Skip = 20, Limit = 10 }, Ct);
 
-        result.Should().ContainSingle().Which.FullName.Should().Be("George Orwell");
+        result.Items.Should().ContainSingle().Which.FullName.Should().Be("George Orwell");
+        result.Total.Should().Be(35);
+        result.NextLink.Should().Be("http://localhost/api/authors?skip=30&limit=10");
     }
 
     [Fact]

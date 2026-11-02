@@ -10,9 +10,12 @@ namespace Bookshelf.Web.Controllers.Api;
 public class BooksApiController(IBookService bookService) : ControllerBase
 {
     [HttpGet]
-    public async Task<IReadOnlyList<BookListDto>> GetAll(CancellationToken cancellationToken)
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType<ValidationProblemDetails>(StatusCodes.Status400BadRequest)]
+    public async Task<PagedResponse<BookListDto>> GetAll([FromQuery] PageQuery query, CancellationToken cancellationToken)
     {
-        return await bookService.GetAllAsync(cancellationToken: cancellationToken);
+        var page = await bookService.GetPageAsync(query.Skip, query.Limit, cancellationToken);
+        return PagedResponse.From(page, query, Request);
     }
 
     [HttpGet("{id:int}")]

@@ -9,9 +9,12 @@ namespace Bookshelf.Web.Controllers.Api;
 public class GenresApiController(IGenreService genreService) : ControllerBase
 {
     [HttpGet]
-    public async Task<IReadOnlyList<GenreListDto>> GetAll(CancellationToken cancellationToken)
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType<ValidationProblemDetails>(StatusCodes.Status400BadRequest)]
+    public async Task<PagedResponse<GenreListDto>> GetAll([FromQuery] PageQuery query, CancellationToken cancellationToken)
     {
-        return await genreService.GetAllAsync(cancellationToken);
+        var page = await genreService.GetPageAsync(query.Skip, query.Limit, cancellationToken);
+        return PagedResponse.From(page, query, Request);
     }
 
     [HttpGet("{id:int}")]

@@ -14,6 +14,17 @@ internal static class ControllerTestExtensions
         return controller;
     }
 
+    public static T WithRequest<T>(this T controller, string path)
+        where T : ControllerBase
+    {
+        var httpContext = new DefaultHttpContext();
+        httpContext.Request.Scheme = "http";
+        httpContext.Request.Host = new HostString("localhost");
+        httpContext.Request.Path = path;
+        controller.ControllerContext = new ControllerContext { HttpContext = httpContext };
+        return controller;
+    }
+
     public static IReadOnlyDictionary<string, string[]> Errors(string key, string message) =>
         new Dictionary<string, string[]> { [key] = [message] };
 }

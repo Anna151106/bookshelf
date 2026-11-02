@@ -29,19 +29,21 @@ public class BooksApiControllerTests
 
     public BooksApiControllerTests()
     {
-        controller = new BooksApiController(service.Object);
+        controller = new BooksApiController(service.Object).WithRequest("/api/books");
     }
 
     private static CancellationToken Ct => TestContext.Current.CancellationToken;
 
     [Fact]
-    public async Task GetAll_ReturnsBooks()
+    public async Task GetAll_ReturnsPage()
     {
-        service.Setup(s => s.GetAllAsync(null, Ct)).ReturnsAsync([new BookListDto(1, "1984", 1949, null, 4, "George Orwell", 3, "Dystopia")]);
+        service.Setup(s => s.GetPageAsync(0, 1, Ct))
+            .ReturnsAsync(new PagedList<BookListDto>([new BookListDto(1, "1984", 1949, null, 4, "George Orwell", 3, "Dystopia")], 2));
 
-        var result = await controller.GetAll(Ct);
+        var result = await controller.GetAll(new PageQuery { Limit = 1 }, Ct);
 
-        result.Should().ContainSingle().Which.Title.Should().Be("1984");
+        result.Items.Should().ContainSingle().Which.Title.Should().Be("1984");
+        result.NextLink.Should().Be("http://localhost/api/books?skip=1&limit=1");
     }
 
     [Fact]
