@@ -1,7 +1,7 @@
 services:
-  postgres:
+  db:
     image: postgres:16
-    container_name: bookshelf-postgres
+    container_name: bookshelf-db
     restart: unless-stopped
     environment:
       POSTGRES_DB: bookshelf
@@ -11,6 +11,30 @@ services:
       - "5432:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bookshelf -d bookshelf"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: bookshelf-web
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ConnectionStrings__DefaultConnection: Host=db;Port=5432;Database=bookshelf;Username=bookshelf;Password=bookshelf
+      Database__MigrateOnStartup: "true"
+    ports:
+      - "8080:8080"
+    volumes:
+      - uploads:/app/wwwroot/uploads
 
 volumes:
   postgres-data:
+  uploads:

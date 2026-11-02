@@ -1,0 +1,14 @@
+**/bin/
+**/obj/
+.git/
+.gitignore
+.vs/
+.vscode/
+tests/
+docs/
+*.md
+**/appsettings.Development.json
+**/wwwroot/uploads/covers/
+Dockerfile
+.dockerignore
+docker-compose.yml
