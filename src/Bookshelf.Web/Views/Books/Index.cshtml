@@ -1,0 +1,67 @@
+@model BookIndexViewModel
+@using Microsoft.AspNetCore.Mvc.Rendering
+@{
+    ViewData["Title"] = "Книги";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">Книги</h1>
+    <a class="btn btn-primary" asp-action="Create">Додати книгу</a>
+</div>
+
+<form asp-action="Index" method="get" class="row g-2 align-items-end mb-4" role="search">
+    <div class="col-12 col-md-4">
+        <label for="search" class="form-label small text-muted">Назва</label>
+        <input id="search" name="search" value="@Model.Search" class="form-control" placeholder="Пошук за назвою" />
+    </div>
+    <div class="col-6 col-md-3">
+        <label for="genreId" class="form-label small text-muted">Жанр</label>
+        <select id="genreId" name="genreId" class="form-select"
+                asp-items="@(new SelectList(Model.Genres, nameof(SelectListItem.Value), nameof(SelectListItem.Text), Model.GenreId?.ToString()))">
+            <option value="">Усі жанри</option>
+        </select>
+    </div>
+    <div class="col-6 col-md-3">
+        <label for="authorId" class="form-label small text-muted">Автор</label>
+        <select id="authorId" name="authorId" class="form-select"
+                asp-items="@(new SelectList(Model.Authors, nameof(SelectListItem.Value), nameof(SelectListItem.Text), Model.AuthorId?.ToString()))">
+            <option value="">Усі автори</option>
+        </select>
+    </div>
+    <div class="col-12 col-md-2 d-flex gap-2">
+        <button type="submit" class="btn btn-outline-primary flex-grow-1">Знайти</button>
+        @if (Model.IsFiltered)
+        {
+            <a class="btn btn-outline-secondary" asp-action="Index">Скинути</a>
+        }
+    </div>
+</form>
+
+@if (Model.Books.Count == 0)
+{
+    <p class="text-muted">@(Model.IsFiltered ? "Нічого не знайдено." : "Книг ще немає.")</p>
+}
+else
+{
+    <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-3">
+        @foreach (var book in Model.Books)
+        {
+            <div class="col">
+                <div class="card h-100">
+                    <a asp-action="Details" asp-route-id="@book.Id">
+                        <img src="@Url.CoverUrl(book.CoverPath)" class="card-img-top book-cover" alt="Обкладинка: @book.Title" loading="lazy" />
+                    </a>
+                    <div class="card-body">
+                        <h2 class="h6 card-title mb-1">
+                            <a class="stretched-link text-decoration-none" asp-action="Details" asp-route-id="@book.Id">@book.Title</a>
+                        </h2>
+                        <p class="card-text small text-muted mb-0">@book.AuthorName · @book.PublishedYear</p>
+                    </div>
+                    <div class="card-footer bg-transparent border-0 pt-0">
+                        <span class="badge text-bg-light">@book.GenreName</span>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}

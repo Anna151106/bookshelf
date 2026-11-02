@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="450" viewBox="0 0 300 450">
+  <rect width="300" height="450" fill="#e9ecef"/>
+  <rect x="20" y="20" width="260" height="410" fill="none" stroke="#ced4da" stroke-width="2"/>
+  <g fill="none" stroke="#adb5bd" stroke-width="6" stroke-linejoin="round">
+    <path d="M110 170h80v110h-80z"/>
+    <path d="M125 200h50M125 220h50M125 240h30"/>
+  </g>
+  <text x="150" y="330" font-family="system-ui, sans-serif" font-size="20" fill="#6c757d" text-anchor="middle">Без обкладинки</text>
+</svg>

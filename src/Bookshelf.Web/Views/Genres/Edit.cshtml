@@ -1,0 +1,12 @@
+@model GenreFormViewModel
+@{
+    ViewData["Title"] = "Редагування жанру";
+}
+
+<h1 class="h3 mb-3">Редагування жанру</h1>
+
+<form asp-action="Edit" method="post" class="col-lg-6">
+    <partial name="_Form" model="Model" />
+    <button type="submit" class="btn btn-primary">Зберегти</button>
+    <a class="btn btn-link" asp-action="Details" asp-route-id="@ViewContext.RouteData.Values["id"]">Скасувати</a>
+</form>

@@ -1,0 +1,29 @@
+@model ReviewDto
+@{
+    ViewData["Title"] = "Відгук";
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-action="Index">Відгуки</a></li>
+        <li class="breadcrumb-item active" aria-current="page">@Model.ReaderName</li>
+    </ol>
+</nav>
+
+<div class="card col-lg-8">
+    <div class="card-body">
+        <div class="d-flex justify-content-between flex-wrap gap-2">
+            <h1 class="h5 mb-0">@Model.ReaderName <span class="rating ms-2">@ViewHelpers.Stars(Model.Rating)</span></h1>
+            <small class="text-muted">@Model.CreatedAt.ToLocalTime().ToString("d MMMM yyyy")</small>
+        </div>
+        <p class="small text-muted mt-1">
+            до книги <a asp-controller="Books" asp-action="Details" asp-route-id="@Model.BookId">«@Model.BookTitle»</a>
+        </p>
+        @if (Model.Text is not null)
+        {
+            <p class="card-text" style="white-space: pre-line">@Model.Text</p>
+        }
+        <a class="btn btn-sm btn-outline-secondary" asp-action="Edit" asp-route-id="@Model.Id">Редагувати</a>
+        <a class="btn btn-sm btn-outline-danger" asp-action="Delete" asp-route-id="@Model.Id">Видалити</a>
+    </div>
+</div>

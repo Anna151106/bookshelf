@@ -1,0 +1,26 @@
+@model AuthorFormViewModel
+
+<div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+<div class="mb-3">
+    <label asp-for="FullName" class="form-label"></label>
+    <input asp-for="FullName" class="form-control" />
+    <span asp-validation-for="FullName" class="text-danger small"></span>
+</div>
+<div class="row">
+    <div class="col-md-6 mb-3">
+        <label asp-for="Country" class="form-label"></label>
+        <input asp-for="Country" class="form-control" />
+        <span asp-validation-for="Country" class="text-danger small"></span>
+    </div>
+    <div class="col-md-6 mb-3">
+        <label asp-for="BirthYear" class="form-label"></label>
+        <input asp-for="BirthYear" class="form-control" />
+        <span asp-validation-for="BirthYear" class="text-danger small"></span>
+    </div>
+</div>
+<div class="mb-3">
+    <label asp-for="Biography" class="form-label"></label>
+    <textarea asp-for="Biography" class="form-control" rows="5"></textarea>
+    <span asp-validation-for="Biography" class="text-danger small"></span>
+</div>

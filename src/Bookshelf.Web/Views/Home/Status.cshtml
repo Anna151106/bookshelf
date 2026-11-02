@@ -1,0 +1,17 @@
+@model int
+@{
+    ViewData["Title"] = Model == 404 ? "Не знайдено" : "Помилка";
+}
+
+<div class="py-5 text-center">
+    <h1 class="display-4">@Model</h1>
+    @if (Model == 404)
+    {
+        <p class="lead">Сторінку не знайдено.</p>
+    }
+    else
+    {
+        <p class="lead">Щось пішло не так.</p>
+    }
+    <a class="btn btn-primary" asp-controller="Home" asp-action="Index">На головну</a>
+</div>

@@ -1,0 +1,24 @@
+@model BookDetailsDto
+@{
+    ViewData["Title"] = "Видалення книги";
+}
+
+<h1 class="h3 mb-3">Видалити книгу?</h1>
+
+<div class="card mb-3 col-lg-8">
+    <div class="card-body d-flex gap-3">
+        <img src="@Url.CoverUrl(Model.CoverPath)" class="book-cover book-cover-sm rounded" alt="Обкладинка: @Model.Title" />
+        <div>
+            <h2 class="h5 card-title mb-1">@Model.Title</h2>
+            <p class="text-muted mb-2">@Model.AuthorName · @Model.PublishedYear</p>
+            <p class="card-text mb-0">
+                Разом із книгою видаляться всі її відгуки (@Model.Reviews.Count) та обкладинка.
+            </p>
+        </div>
+    </div>
+</div>
+
+<form asp-action="Delete" method="post">
+    <button type="submit" class="btn btn-danger">Видалити</button>
+    <a class="btn btn-link" asp-action="Details" asp-route-id="@Model.Id">Скасувати</a>
+</form>

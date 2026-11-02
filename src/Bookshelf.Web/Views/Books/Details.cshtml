@@ -1,0 +1,105 @@
+@model BookDetailsViewModel
+@{
+    var book = Model.Book;
+    ViewData["Title"] = book.Title;
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-action="Index">Книги</a></li>
+        <li class="breadcrumb-item active" aria-current="page">@book.Title</li>
+    </ol>
+</nav>
+
+<div class="row g-4">
+    <div class="col-sm-5 col-md-4 col-lg-3">
+        <img src="@Url.CoverUrl(book.CoverPath)" class="book-cover rounded shadow-sm" alt="Обкладинка: @book.Title" />
+    </div>
+    <div class="col">
+        <h1 class="h3 mb-1">@book.Title</h1>
+        <p class="lead mb-2">
+            <a asp-controller="Authors" asp-action="Details" asp-route-id="@book.AuthorId">@book.AuthorName</a>
+        </p>
+        <p class="mb-3">
+            @if (book.AverageRating is { } average)
+            {
+                <span class="rating">@ViewHelpers.Stars((int)Math.Round(average))</span>
+                <span class="text-muted">@average.ToString("0.0") · відгуків: @book.Reviews.Count</span>
+            }
+            else
+            {
+                <span class="text-muted">Ще немає оцінок</span>
+            }
+        </p>
+
+        <dl class="row mb-3">
+            <dt class="col-sm-4 col-lg-3">Жанр</dt>
+            <dd class="col-sm-8 col-lg-9">
+                <a asp-controller="Genres" asp-action="Details" asp-route-id="@book.GenreId">@book.GenreName</a>
+            </dd>
+            <dt class="col-sm-4 col-lg-3">Рік видання</dt>
+            <dd class="col-sm-8 col-lg-9">@book.PublishedYear</dd>
+            <dt class="col-sm-4 col-lg-3">Сторінок</dt>
+            <dd class="col-sm-8 col-lg-9">@book.Pages</dd>
+            <dt class="col-sm-4 col-lg-3">ISBN</dt>
+            <dd class="col-sm-8 col-lg-9"><code>@book.Isbn</code></dd>
+        </dl>
+
+        @if (book.Description is not null)
+        {
+            <p style="white-space: pre-line">@book.Description</p>
+        }
+
+        <div>
+            <a class="btn btn-outline-secondary" asp-action="Edit" asp-route-id="@book.Id">Редагувати</a>
+            <a class="btn btn-outline-danger" asp-action="Delete" asp-route-id="@book.Id">Видалити</a>
+        </div>
+    </div>
+</div>
+
+<section id="reviews" class="mt-5">
+    <h2 class="h4 mb-3">Відгуки</h2>
+
+    <div class="row g-4">
+        <div class="col-lg-7">
+            @if (book.Reviews.Count == 0)
+            {
+                <p class="text-muted">Відгуків ще немає.</p>
+            }
+            @foreach (var review in book.Reviews)
+            {
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between flex-wrap gap-2">
+                            <div>
+                                <strong>@review.ReaderName</strong>
+                                <span class="rating ms-2">@ViewHelpers.Stars(review.Rating)</span>
+                            </div>
+                            <small class="text-muted">@review.CreatedAt.ToLocalTime().ToString("d MMMM yyyy")</small>
+                        </div>
+                        @if (review.Text is not null)
+                        {
+                            <p class="card-text mt-2 mb-0" style="white-space: pre-line">@review.Text</p>
+                        }
+                        <div class="mt-2">
+                            <a class="small" asp-controller="Reviews" asp-action="Edit" asp-route-id="@review.Id">Редагувати</a>
+                            <a class="small text-danger ms-2" asp-controller="Reviews" asp-action="Delete" asp-route-id="@review.Id">Видалити</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="col-lg-5">
+            <div class="card">
+                <div class="card-body">
+                    <h3 class="h6 card-title">Новий відгук</h3>
+                    <form asp-controller="Reviews" asp-action="Create" method="post">
+                        <partial name="~/Views/Reviews/_Form.cshtml" model="Model.NewReview" />
+                        <button type="submit" class="btn btn-primary">Надіслати</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

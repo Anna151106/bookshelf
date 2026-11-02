@@ -1,0 +1,13 @@
+@model BookFormViewModel
+@{
+    ViewData["Title"] = "Редагування книги";
+}
+
+<h1 class="h3 mb-3">Редагування книги</h1>
+
+<form asp-action="Edit" method="post" enctype="multipart/form-data" class="col-lg-9">
+    <input type="hidden" asp-for="CurrentCoverPath" />
+    <partial name="_Form" model="Model" />
+    <button type="submit" class="btn btn-primary">Зберегти</button>
+    <a class="btn btn-link" asp-action="Details" asp-route-id="@ViewContext.RouteData.Values["id"]">Скасувати</a>
+</form>

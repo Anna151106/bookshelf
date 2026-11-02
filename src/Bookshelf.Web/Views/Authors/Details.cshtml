@@ -1,0 +1,47 @@
+@model AuthorDetailsDto
+@{
+    ViewData["Title"] = Model.FullName;
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-action="Index">Автори</a></li>
+        <li class="breadcrumb-item active" aria-current="page">@Model.FullName</li>
+    </ol>
+</nav>
+
+<div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-3">
+    <div>
+        <h1 class="h3 mb-1">@Model.FullName</h1>
+        <p class="text-muted mb-0">
+            @string.Join(" · ", new[] { Model.Country, Model.BirthYear?.ToString() }.Where(s => !string.IsNullOrEmpty(s)))
+        </p>
+    </div>
+    <div class="text-nowrap">
+        <a class="btn btn-outline-secondary" asp-action="Edit" asp-route-id="@Model.Id">Редагувати</a>
+        <a class="btn btn-outline-danger" asp-action="Delete" asp-route-id="@Model.Id">Видалити</a>
+    </div>
+</div>
+
+@if (Model.Biography is not null)
+{
+    <p style="white-space: pre-line">@Model.Biography</p>
+}
+
+<h2 class="h5 mt-4">Книги</h2>
+@if (Model.Books.Count == 0)
+{
+    <p class="text-muted">Книг цього автора ще немає.</p>
+}
+else
+{
+    <ul class="list-group">
+        @foreach (var book in Model.Books)
+        {
+            <li class="list-group-item d-flex justify-content-between">
+                <a asp-controller="Books" asp-action="Details" asp-route-id="@book.Id">@book.Title</a>
+                <span class="text-muted">@book.PublishedYear</span>
+            </li>
+        }
+    </ul>
+}

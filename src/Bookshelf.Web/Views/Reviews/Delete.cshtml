@@ -1,0 +1,25 @@
+@model ReviewDto
+@{
+    ViewData["Title"] = "Видалення відгуку";
+}
+
+<h1 class="h3 mb-3">Видалити відгук?</h1>
+
+<div class="card mb-3 col-lg-6">
+    <div class="card-body">
+        <h2 class="h6 card-title">
+            @Model.ReaderName <span class="rating ms-2">@ViewHelpers.Stars(Model.Rating)</span>
+        </h2>
+        <p class="small text-muted">до книги «@Model.BookTitle»</p>
+        @if (Model.Text is not null)
+        {
+            <p class="card-text" style="white-space: pre-line">@Model.Text</p>
+        }
+    </div>
+</div>
+
+<form asp-action="Delete" method="post">
+    <input type="hidden" name="bookId" value="@Model.BookId" />
+    <button type="submit" class="btn btn-danger">Видалити</button>
+    <a class="btn btn-link" asp-controller="Books" asp-action="Details" asp-route-id="@Model.BookId" asp-fragment="reviews">Скасувати</a>
+</form>

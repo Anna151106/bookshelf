@@ -1,0 +1,58 @@
+@model BookFormViewModel
+
+<div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+<div class="mb-3">
+    <label asp-for="Title" class="form-label"></label>
+    <input asp-for="Title" class="form-control" />
+    <span asp-validation-for="Title" class="text-danger small"></span>
+</div>
+<div class="row">
+    <div class="col-md-6 mb-3">
+        <label asp-for="AuthorId" class="form-label"></label>
+        <select asp-for="AuthorId" asp-items="Model.Authors" class="form-select">
+            <option value="">Оберіть автора</option>
+        </select>
+        <span asp-validation-for="AuthorId" class="text-danger small"></span>
+    </div>
+    <div class="col-md-6 mb-3">
+        <label asp-for="GenreId" class="form-label"></label>
+        <select asp-for="GenreId" asp-items="Model.Genres" class="form-select">
+            <option value="">Оберіть жанр</option>
+        </select>
+        <span asp-validation-for="GenreId" class="text-danger small"></span>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-4 mb-3">
+        <label asp-for="Isbn" class="form-label"></label>
+        <input asp-for="Isbn" class="form-control" placeholder="978-617-..." />
+        <span asp-validation-for="Isbn" class="text-danger small"></span>
+    </div>
+    <div class="col-6 col-md-4 mb-3">
+        <label asp-for="PublishedYear" class="form-label"></label>
+        <input asp-for="PublishedYear" class="form-control" />
+        <span asp-validation-for="PublishedYear" class="text-danger small"></span>
+    </div>
+    <div class="col-6 col-md-4 mb-3">
+        <label asp-for="Pages" class="form-label"></label>
+        <input asp-for="Pages" class="form-control" min="1" />
+        <span asp-validation-for="Pages" class="text-danger small"></span>
+    </div>
+</div>
+<div class="mb-3">
+    <label asp-for="Description" class="form-label"></label>
+    <textarea asp-for="Description" class="form-control" rows="5"></textarea>
+    <span asp-validation-for="Description" class="text-danger small"></span>
+</div>
+<div class="mb-3">
+    <label asp-for="Cover" class="form-label"></label>
+    <div class="d-flex gap-3 align-items-start">
+        <img src="@Url.CoverUrl(Model.CurrentCoverPath)" class="book-cover book-cover-sm rounded" alt="Поточна обкладинка" />
+        <div class="flex-grow-1">
+            <input asp-for="Cover" type="file" class="form-control" accept=".jpg,.jpeg,.png,.webp" />
+            <div class="form-text">JPG, PNG або WEBP, до 5 МБ.@(Model.CurrentCoverPath is not null ? " Нова обкладинка замінить стару." : "")</div>
+            <span asp-validation-for="Cover" class="text-danger small"></span>
+        </div>
+    </div>
+</div>

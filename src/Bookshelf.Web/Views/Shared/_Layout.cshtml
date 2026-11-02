@@ -1,0 +1,52 @@
+@{
+    var currentController = ViewContext.RouteData.Values["controller"] as string;
+    string NavClass(string controller) => controller == currentController ? "nav-link active" : "nav-link";
+}
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Bookshelf</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body class="d-flex flex-column min-vh-100">
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-dark bg-dark mb-4">
+            <div class="container">
+                <a class="navbar-brand" asp-controller="Home" asp-action="Index">Bookshelf</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"
+                        aria-controls="mainNav" aria-expanded="false" aria-label="Перемкнути навігацію">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="mainNav">
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item">
+                            <a class="@NavClass("Books")" asp-controller="Books" asp-action="Index">Книги</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="@NavClass("Authors")" asp-controller="Authors" asp-action="Index">Автори</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="@NavClass("Genres")" asp-controller="Genres" asp-action="Index">Жанри</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container pb-4 flex-grow-1">
+        <partial name="_Alerts" />
+        @RenderBody()
+    </main>
+
+    <footer class="border-top py-3 text-muted">
+        <div class="container">&copy; @DateTime.Now.Year Bookshelf</div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,14 @@
+bin/
+obj/
+artifacts/
+.vs/
+.vscode/*
+!.vscode/extensions.json
+*.user
+*.suo
+TestResults/
+coverage/
+appsettings.Development.json
+wwwroot/uploads/*
+!wwwroot/uploads/.gitkeep
+CLAUDE.md

@@ -1,0 +1,45 @@
+@model IReadOnlyList<AuthorListDto>
+@{
+    ViewData["Title"] = "Автори";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">Автори</h1>
+    <a class="btn btn-primary" asp-action="Create">Додати автора</a>
+</div>
+
+@if (Model.Count == 0)
+{
+    <p class="text-muted">Авторів ще немає.</p>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>Ім'я</th>
+                    <th>Країна</th>
+                    <th>Рік народження</th>
+                    <th class="text-end">Книг</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var author in Model)
+                {
+                    <tr>
+                        <td><a asp-action="Details" asp-route-id="@author.Id">@author.FullName</a></td>
+                        <td>@author.Country</td>
+                        <td>@author.BirthYear</td>
+                        <td class="text-end">@author.BookCount</td>
+                        <td class="text-end text-nowrap">
+                            <a class="btn btn-sm btn-outline-secondary" asp-action="Edit" asp-route-id="@author.Id">Редагувати</a>
+                            <a class="btn btn-sm btn-outline-danger" asp-action="Delete" asp-route-id="@author.Id">Видалити</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

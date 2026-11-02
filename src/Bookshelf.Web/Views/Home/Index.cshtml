@@ -1,0 +1,35 @@
+@{
+    ViewData["Title"] = "Головна";
+}
+
+<div class="py-4 text-center">
+    <h1 class="display-5">Bookshelf</h1>
+    <p class="lead text-muted">Каталог книг з відгуками читачів.</p>
+</div>
+
+<div class="row row-cols-1 row-cols-md-3 g-3">
+    <div class="col">
+        <a class="card h-100 text-decoration-none" asp-controller="Books" asp-action="Index">
+            <div class="card-body">
+                <h2 class="h5 card-title">Книги</h2>
+                <p class="card-text text-muted">Усі книги каталогу.</p>
+            </div>
+        </a>
+    </div>
+    <div class="col">
+        <a class="card h-100 text-decoration-none" asp-controller="Authors" asp-action="Index">
+            <div class="card-body">
+                <h2 class="h5 card-title">Автори</h2>
+                <p class="card-text text-muted">Список авторів та їхні книги.</p>
+            </div>
+        </a>
+    </div>
+    <div class="col">
+        <a class="card h-100 text-decoration-none" asp-controller="Genres" asp-action="Index">
+            <div class="card-body">
+                <h2 class="h5 card-title">Жанри</h2>
+                <p class="card-text text-muted">Книги за жанрами.</p>
+            </div>
+        </a>
+    </div>
+</div>

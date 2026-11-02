@@ -1,0 +1,12 @@
+@model GenreFormViewModel
+@{
+    ViewData["Title"] = "Новий жанр";
+}
+
+<h1 class="h3 mb-3">Новий жанр</h1>
+
+<form asp-action="Create" method="post" class="col-lg-6">
+    <partial name="_Form" model="Model" />
+    <button type="submit" class="btn btn-primary">Зберегти</button>
+    <a class="btn btn-link" asp-action="Index">Скасувати</a>
+</form>

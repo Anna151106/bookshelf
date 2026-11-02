@@ -1,0 +1,29 @@
+@model ReviewFormViewModel
+@using Bookshelf.Domain.Entities
+
+<div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+<input type="hidden" asp-for="BookId" />
+<span asp-validation-for="BookId" class="text-danger small d-block"></span>
+
+<div class="mb-3">
+    <label asp-for="ReaderName" class="form-label"></label>
+    <input asp-for="ReaderName" class="form-control" />
+    <span asp-validation-for="ReaderName" class="text-danger small"></span>
+</div>
+<div class="mb-3">
+    <label asp-for="Rating" class="form-label"></label>
+    <select asp-for="Rating" class="form-select">
+        <option value="">Оберіть оцінку</option>
+        @for (var rating = Review.MaxRating; rating >= Review.MinRating; rating--)
+        {
+            <option value="@rating">@ViewHelpers.Stars(rating) (@rating)</option>
+        }
+    </select>
+    <span asp-validation-for="Rating" class="text-danger small"></span>
+</div>
+<div class="mb-3">
+    <label asp-for="Text" class="form-label"></label>
+    <textarea asp-for="Text" class="form-control" rows="4"></textarea>
+    <span asp-validation-for="Text" class="text-danger small"></span>
+</div>

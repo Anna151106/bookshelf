@@ -1,0 +1,12 @@
+@model ReviewFormViewModel
+@{
+    ViewData["Title"] = "Редагування відгуку";
+}
+
+<h1 class="h3 mb-3">Редагування відгуку</h1>
+
+<form asp-action="Edit" method="post" class="col-lg-6">
+    <partial name="_Form" model="Model" />
+    <button type="submit" class="btn btn-primary">Зберегти</button>
+    <a class="btn btn-link" asp-controller="Books" asp-action="Details" asp-route-id="@Model.BookId" asp-fragment="reviews">Скасувати</a>
+</form>
