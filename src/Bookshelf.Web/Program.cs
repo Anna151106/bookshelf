@@ -6,6 +6,7 @@ using Bookshelf.Infrastructure;
 using Bookshelf.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.WebEncoders;
+using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +23,8 @@ builder.Services.AddControllersWithViews(options =>
 });
 builder.Services.Configure<WebEncoderOptions>(options =>
     options.TextEncoderSettings = new TextEncoderSettings(UnicodeRanges.All));
+builder.Services.AddProblemDetails();
+builder.Services.AddOpenApi();
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 
@@ -46,7 +49,8 @@ app.UseRequestLocalization(new RequestLocalizationOptions
     SupportedUICultures = [culture],
 });
 
-app.UseStatusCodePagesWithReExecute("/Home/Status/{0}");
+app.UseWhen(context => IsApiRequest(context), api => api.UseExceptionHandler());
+app.UseWhen(context => !IsApiRequest(context), web => web.UseStatusCodePagesWithReExecute("/Home/Status/{0}"));
 if (!app.Configuration.GetValue<bool>("DOTNET_RUNNING_IN_CONTAINER"))
 {
     app.UseHttpsRedirection();
@@ -58,8 +62,16 @@ app.UseRouting();
 
 app.UseAuthorization();
 
+if (app.Environment.IsDevelopment())
+{
+    app.MapOpenApi();
+    app.MapScalarApiReference();
+}
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
+
+static bool IsApiRequest(HttpContext context) => context.Request.Path.StartsWithSegments("/api");
