@@ -1,0 +1,52 @@
+html {
+    scroll-padding-top: 4.5rem;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    html {
+        scroll-behavior: smooth;
+    }
+}
+
+.landing-section {
+    padding: 4rem 0;
+}
+
+.landing-hero {
+    padding: 6rem 0 4rem;
+}
+
+.landing-hero .book-cover {
+    max-width: 280px;
+}
+
+.landing-alerts {
+    position: fixed;
+    top: 4.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(100% - 2rem, 36rem);
+    z-index: 1040;
+}
+
+body.landing {
+    padding-bottom: 2.5rem;
+}
+
+.contact-dock {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1030;
+}
+
+@media (max-width: 767.98px) {
+    .landing-hero {
+        padding-top: 5rem;
+    }
+
+    .landing-hero .book-cover {
+        max-width: 200px;
+    }
+}

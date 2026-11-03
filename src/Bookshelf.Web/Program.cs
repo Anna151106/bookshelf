@@ -4,6 +4,7 @@ using System.Text.Unicode;
 using Bookshelf.Application;
 using Bookshelf.Infrastructure;
 using Bookshelf.Infrastructure.Persistence;
+using Bookshelf.Web.Infrastructure;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.WebEncoders;
 using Scalar.AspNetCore;
@@ -23,6 +24,7 @@ builder.Services.AddControllersWithViews(options =>
 });
 builder.Services.Configure<WebEncoderOptions>(options =>
     options.TextEncoderSettings = new TextEncoderSettings(UnicodeRanges.All));
+builder.Services.Configure<LibraryContactsOptions>(builder.Configuration.GetSection(LibraryContactsOptions.SectionName));
 builder.Services.AddProblemDetails();
 builder.Services.AddOpenApi();
 builder.Services.AddApplication();

@@ -1,105 +1,193 @@
 @model BookDetailsViewModel
 @{
     var book = Model.Book;
+    var author = Model.Author;
+    var contacts = Model.Contacts;
     ViewData["Title"] = book.Title;
+    Layout = "_LandingLayout";
 }
 
-<nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a asp-action="Index">Книги</a></li>
-        <li class="breadcrumb-item active" aria-current="page">@book.Title</li>
-    </ol>
-</nav>
+@section Navigation {
+    <li class="nav-item"><a class="nav-link" href="#about">Книга</a></li>
+    <li class="nav-item"><a class="nav-link" href="#description">Опис</a></li>
+    <li class="nav-item"><a class="nav-link" href="#author">Про автора</a></li>
+    <li class="nav-item"><a class="nav-link" href="#reviews">Відгуки</a></li>
+    <li class="nav-item"><a class="nav-link" href="#contacts">Контакти</a></li>
+}
 
-<div class="row g-4">
-    <div class="col-sm-5 col-md-4 col-lg-3">
-        <img src="@Url.CoverUrl(book.CoverPath)" class="book-cover rounded shadow-sm" alt="Обкладинка: @book.Title" />
+@section Actions {
+    <div class="dropdown">
+        <button class="btn btn-sm btn-outline-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Керування
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end">
+            <li><a class="dropdown-item" asp-action="Edit" asp-route-id="@book.Id">Редагувати книгу</a></li>
+            <li><a class="dropdown-item text-danger" asp-action="Delete" asp-route-id="@book.Id">Видалити книгу</a></li>
+        </ul>
     </div>
-    <div class="col">
-        <h1 class="h3 mb-1">@book.Title</h1>
-        <p class="lead mb-2">
-            <a asp-controller="Authors" asp-action="Details" asp-route-id="@book.AuthorId">@book.AuthorName</a>
-        </p>
-        <p class="mb-3">
-            @if (book.AverageRating is { } average)
-            {
-                <span class="rating">@ViewHelpers.Stars((int)Math.Round(average))</span>
-                <span class="text-muted">@average.ToString("0.0") · відгуків: @book.Reviews.Count</span>
-            }
-            else
-            {
-                <span class="text-muted">Ще немає оцінок</span>
-            }
-        </p>
+}
 
-        <dl class="row mb-3">
-            <dt class="col-sm-4 col-lg-3">Жанр</dt>
-            <dd class="col-sm-8 col-lg-9">
-                <a asp-controller="Genres" asp-action="Details" asp-route-id="@book.GenreId">@book.GenreName</a>
-            </dd>
-            <dt class="col-sm-4 col-lg-3">Рік видання</dt>
-            <dd class="col-sm-8 col-lg-9">@book.PublishedYear</dd>
-            <dt class="col-sm-4 col-lg-3">Сторінок</dt>
-            <dd class="col-sm-8 col-lg-9">@book.Pages</dd>
-            <dt class="col-sm-4 col-lg-3">ISBN</dt>
-            <dd class="col-sm-8 col-lg-9"><code>@book.Isbn</code></dd>
-        </dl>
-
-        @if (book.Description is not null)
-        {
-            <p style="white-space: pre-line">@book.Description</p>
-        }
-
-        <div>
-            <a class="btn btn-outline-secondary" asp-action="Edit" asp-route-id="@book.Id">Редагувати</a>
-            <a class="btn btn-outline-danger" asp-action="Delete" asp-route-id="@book.Id">Видалити</a>
+<section id="about" class="landing-hero bg-body-tertiary">
+    <div class="container">
+        <div class="row g-4 align-items-center">
+            <div class="col-md-5 col-lg-4 text-center">
+                <img src="@Url.CoverUrl(book.CoverPath)" class="book-cover rounded shadow" alt="Обкладинка: @book.Title" />
+            </div>
+            <div class="col-md-7 col-lg-8 text-center text-md-start">
+                <h1 class="display-5 fw-bold mb-2">@book.Title</h1>
+                <p class="fs-4 mb-3">
+                    <a class="link-body-emphasis" asp-controller="Authors" asp-action="Details" asp-route-id="@book.AuthorId">@book.AuthorName</a>
+                </p>
+                <p class="mb-3">
+                    <a class="badge text-bg-secondary text-decoration-none" asp-controller="Genres" asp-action="Details" asp-route-id="@book.GenreId">@book.GenreName</a>
+                    <span class="badge text-bg-light border">@book.PublishedYear</span>
+                </p>
+                <p class="mb-4">
+                    @if (book.AverageRating is { } average)
+                    {
+                        <span class="rating fs-5">@ViewHelpers.Stars((int)Math.Round(average))</span>
+                        <span class="text-muted">@average.ToString("0.0") · відгуків: @book.Reviews.Count</span>
+                    }
+                    else
+                    {
+                        <span class="text-muted">Ще немає оцінок</span>
+                    }
+                </p>
+                <a class="btn btn-primary btn-lg" href="#reviews">Відгуки читачів</a>
+            </div>
         </div>
     </div>
-</div>
+</section>
 
-<section id="reviews" class="mt-5">
-    <h2 class="h4 mb-3">Відгуки</h2>
+<section id="description" class="landing-section">
+    <div class="container">
+        <h2 class="mb-4">Опис книги</h2>
+        <div class="row g-4">
+            <div class="col-lg-8">
+                @if (book.Description is not null)
+                {
+                    <p class="fs-5" style="white-space: pre-line">@book.Description</p>
+                }
+                else
+                {
+                    <p class="text-muted">Опис ще не додано.</p>
+                }
+            </div>
+            <div class="col-lg-4">
+                <dl class="row mb-0">
+                    <dt class="col-6">Рік видання</dt>
+                    <dd class="col-6">@book.PublishedYear</dd>
+                    <dt class="col-6">Сторінок</dt>
+                    <dd class="col-6">@book.Pages</dd>
+                    <dt class="col-6">ISBN</dt>
+                    <dd class="col-6"><code>@book.Isbn</code></dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+</section>
 
-    <div class="row g-4">
-        <div class="col-lg-7">
-            @if (book.Reviews.Count == 0)
+<section id="author" class="landing-section bg-body-tertiary">
+    <div class="container">
+        <h2 class="mb-4">Про автора</h2>
+        <h3 class="h4 mb-1">@book.AuthorName</h3>
+        @if (author is not null)
+        {
+            var facts = new[] { author.Country, author.BirthYear?.ToString() }.Where(f => f is not null);
+            @if (facts.Any())
             {
-                <p class="text-muted">Відгуків ще немає.</p>
+                <p class="text-muted">@string.Join(" · ", facts)</p>
             }
-            @foreach (var review in book.Reviews)
+            @if (author.Biography is not null)
             {
-                <div class="card mb-3">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between flex-wrap gap-2">
-                            <div>
-                                <strong>@review.ReaderName</strong>
-                                <span class="rating ms-2">@ViewHelpers.Stars(review.Rating)</span>
+                <p class="fs-5" style="white-space: pre-line">@author.Biography</p>
+            }
+        }
+        <a asp-controller="Authors" asp-action="Details" asp-route-id="@book.AuthorId">Усі книги автора</a>
+    </div>
+</section>
+
+<section id="reviews" class="landing-section">
+    <div class="container">
+        <h2 class="mb-4">Відгуки</h2>
+
+        <div class="row g-4">
+            <div class="col-lg-7">
+                @if (book.Reviews.Count == 0)
+                {
+                    <p class="text-muted">Відгуків ще немає.</p>
+                }
+                @foreach (var review in book.Reviews)
+                {
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between flex-wrap gap-2">
+                                <div>
+                                    <strong>@review.ReaderName</strong>
+                                    <span class="rating ms-2">@ViewHelpers.Stars(review.Rating)</span>
+                                </div>
+                                <small class="text-muted">@review.CreatedAt.ToLocalTime().ToString("d MMMM yyyy")</small>
                             </div>
-                            <small class="text-muted">@review.CreatedAt.ToLocalTime().ToString("d MMMM yyyy")</small>
-                        </div>
-                        @if (review.Text is not null)
-                        {
-                            <p class="card-text mt-2 mb-0" style="white-space: pre-line">@review.Text</p>
-                        }
-                        <div class="mt-2">
-                            <a class="small" asp-controller="Reviews" asp-action="Edit" asp-route-id="@review.Id">Редагувати</a>
-                            <a class="small text-danger ms-2" asp-controller="Reviews" asp-action="Delete" asp-route-id="@review.Id">Видалити</a>
+                            @if (review.Text is not null)
+                            {
+                                <p class="card-text mt-2 mb-0" style="white-space: pre-line">@review.Text</p>
+                            }
+                            <div class="mt-2">
+                                <a class="small" asp-controller="Reviews" asp-action="Edit" asp-route-id="@review.Id">Редагувати</a>
+                                <a class="small text-danger ms-2" asp-controller="Reviews" asp-action="Delete" asp-route-id="@review.Id">Видалити</a>
+                            </div>
                         </div>
                     </div>
-                </div>
-            }
-        </div>
+                }
+            </div>
 
-        <div class="col-lg-5">
-            <div class="card">
-                <div class="card-body">
-                    <h3 class="h6 card-title">Новий відгук</h3>
-                    <form asp-controller="Reviews" asp-action="Create" method="post">
-                        <partial name="~/Views/Reviews/_Form.cshtml" model="Model.NewReview" />
-                        <button type="submit" class="btn btn-primary">Надіслати</button>
-                    </form>
+            <div class="col-lg-5">
+                <div class="card">
+                    <div class="card-body">
+                        <h3 class="h6 card-title">Новий відгук</h3>
+                        <form asp-controller="Reviews" asp-action="Create" method="post">
+                            <partial name="~/Views/Reviews/_Form.cshtml" model="Model.NewReview" />
+                            <button type="submit" class="btn btn-primary">Надіслати</button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </section>
+
+<section id="contacts" class="landing-section bg-dark text-white">
+    <div class="container">
+        <h2 class="mb-4">Контакти бібліотеки</h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <h3 class="h6 text-white-50">Телефон</h3>
+                <a class="link-light fs-5" href="tel:@contacts.Phone.Replace(" ", "")">@contacts.Phone</a>
+            </div>
+            <div class="col-md-4">
+                <h3 class="h6 text-white-50">Email</h3>
+                <a class="link-light fs-5" href="mailto:@contacts.Email">@contacts.Email</a>
+            </div>
+            <div class="col-md-4">
+                <h3 class="h6 text-white-50">Адреса</h3>
+                <address class="fs-5 mb-0">@contacts.Address</address>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Fixed {
+    <aside class="contact-dock bg-dark text-white border-top border-secondary" aria-label="Контакти бібліотеки">
+        <div class="container d-flex justify-content-between justify-content-md-end gap-md-4 py-2 small">
+            <a class="link-light text-decoration-none" href="tel:@contacts.Phone.Replace(" ", "")">
+                <span class="d-md-none">Телефон</span><span class="d-none d-md-inline">@contacts.Phone</span>
+            </a>
+            <a class="link-light text-decoration-none" href="mailto:@contacts.Email">
+                <span class="d-md-none">Email</span><span class="d-none d-md-inline">@contacts.Email</span>
+            </a>
+            <a class="link-light text-decoration-none" href="#contacts">
+                <span class="d-md-none">Адреса</span><span class="d-none d-md-inline">@contacts.Address</span>
+            </a>
+        </div>
+    </aside>
+}

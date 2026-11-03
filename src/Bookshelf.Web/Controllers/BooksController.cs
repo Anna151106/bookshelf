@@ -7,13 +7,15 @@ using Bookshelf.Web.Infrastructure;
 using Bookshelf.Web.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Options;
 
 namespace Bookshelf.Web.Controllers;
 
 public class BooksController(
     IBookService bookService,
     IAuthorService authorService,
-    IGenreService genreService) : Controller
+    IGenreService genreService,
+    IOptions<LibraryContactsOptions> contacts) : Controller
 {
     public async Task<IActionResult> Index(int? genreId, int? authorId, string? search, CancellationToken cancellationToken)
     {
@@ -38,9 +40,14 @@ public class BooksController(
             return NotFound();
         }
 
+        var book = result.Value!;
+        var author = await authorService.GetByIdAsync(book.AuthorId, cancellationToken);
+
         return View(new BookDetailsViewModel
         {
-            Book = result.Value!,
+            Book = book,
+            Author = author.Value,
+            Contacts = contacts.Value,
             NewReview = new ReviewFormViewModel { BookId = id },
         });
     }

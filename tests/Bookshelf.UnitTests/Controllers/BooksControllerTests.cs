@@ -3,10 +3,12 @@ using Bookshelf.Application.Books;
 using Bookshelf.Application.Common;
 using Bookshelf.Application.Genres;
 using Bookshelf.Web.Controllers;
+using Bookshelf.Web.Infrastructure;
 using Bookshelf.Web.ViewModels;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Moq;
 using Xunit;
 
@@ -14,19 +16,26 @@ namespace Bookshelf.UnitTests.Controllers;
 
 public class BooksControllerTests
 {
+    private static readonly LibraryContactsOptions Contacts = new()
+    {
+        Phone = "+380 44 000 00 00",
+        Email = "library@bookshelf.example",
+        Address = "вул. Бібліотечна, 1, Київ",
+    };
+
     private readonly Mock<IBookService> books = new();
+    private readonly Mock<IAuthorService> authors = new();
     private readonly BooksController controller;
 
     public BooksControllerTests()
     {
-        var authors = new Mock<IAuthorService>();
         authors.Setup(s => s.GetAllAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync([new AuthorListDto(1, "George Orwell", "UK", 1903, 1)]);
         var genres = new Mock<IGenreService>();
         genres.Setup(s => s.GetAllAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync([new GenreListDto(1, "Dystopia", 1)]);
 
-        controller = new BooksController(books.Object, authors.Object, genres.Object).WithTempData();
+        controller = new BooksController(books.Object, authors.Object, genres.Object, Options.Create(Contacts)).WithTempData();
     }
 
     private static CancellationToken Ct => TestContext.Current.CancellationToken;
@@ -40,6 +49,23 @@ public class BooksControllerTests
 
         result.Should().BeOfType<ViewResult>().Which.Model.Should().BeOfType<BookIndexViewModel>();
         books.Verify(s => s.GetAllAsync(new BookFilter { GenreId = 1, AuthorId = 2, Search = "farm" }, Ct));
+    }
+
+    [Fact]
+    public async Task Details_Existing_ReturnsLandingModel()
+    {
+        var book = new BookDetailsDto(1, "1984", null, 1949, "9780000000101", 328, null, 4, "George Orwell", 3, "Dystopia", null, []);
+        var author = new AuthorDetailsDto(4, "George Orwell", "Британський письменник.", 1903, "UK", []);
+        books.Setup(s => s.GetByIdAsync(1, Ct)).ReturnsAsync(Result<BookDetailsDto>.Success(book));
+        authors.Setup(s => s.GetByIdAsync(4, Ct)).ReturnsAsync(Result<AuthorDetailsDto>.Success(author));
+
+        var result = await controller.Details(1, Ct);
+
+        var model = result.Should().BeOfType<ViewResult>().Which.Model.Should().BeOfType<BookDetailsViewModel>().Subject;
+        model.Book.Should().Be(book);
+        model.Author.Should().Be(author);
+        model.Contacts.Should().BeSameAs(Contacts);
+        model.NewReview.BookId.Should().Be(1);
     }
 
     [Fact]
