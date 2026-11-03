@@ -2,10 +2,12 @@ using Bookshelf.Application.Abstractions;
 using Bookshelf.Application.Books;
 using Bookshelf.Web.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OutputCaching;
 
 namespace Bookshelf.Web.Controllers.Api;
 
 [ApiController]
+[OutputCache(PolicyName = ApiOutputCache.Books)]
 [Route("api/books")]
 public class BooksApiController(IBookService bookService) : ControllerBase
 {

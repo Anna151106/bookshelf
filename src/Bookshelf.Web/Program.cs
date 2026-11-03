@@ -25,6 +25,7 @@ builder.Services.AddControllersWithViews(options =>
 builder.Services.Configure<WebEncoderOptions>(options =>
     options.TextEncoderSettings = new TextEncoderSettings(UnicodeRanges.All));
 builder.Services.Configure<LibraryContactsOptions>(builder.Configuration.GetSection(LibraryContactsOptions.SectionName));
+builder.Services.AddApiOutputCache(builder.Configuration);
 builder.Services.AddProblemDetails();
 builder.Services.AddOpenApi();
 builder.Services.AddApplication();
@@ -61,6 +62,7 @@ if (!app.Configuration.GetValue<bool>("DOTNET_RUNNING_IN_CONTAINER"))
 app.UseStaticFiles();
 
 app.UseRouting();
+app.UseOutputCache();
 
 app.UseAuthorization();
 

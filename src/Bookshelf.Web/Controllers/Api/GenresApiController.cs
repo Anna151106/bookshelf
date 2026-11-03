@@ -1,10 +1,12 @@
 using Bookshelf.Application.Genres;
 using Bookshelf.Web.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OutputCaching;
 
 namespace Bookshelf.Web.Controllers.Api;
 
 [ApiController]
+[OutputCache(PolicyName = ApiOutputCache.Genres)]
 [Route("api/genres")]
 public class GenresApiController(IGenreService genreService) : ControllerBase
 {

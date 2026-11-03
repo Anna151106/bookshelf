@@ -1,10 +1,12 @@
 using Bookshelf.Application.Authors;
 using Bookshelf.Web.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OutputCaching;
 
 namespace Bookshelf.Web.Controllers.Api;
 
 [ApiController]
+[OutputCache(PolicyName = ApiOutputCache.Authors)]
 [Route("api/authors")]
 public class AuthorsApiController(IAuthorService authorService) : ControllerBase
 {

@@ -2,6 +2,7 @@ using Bookshelf.Domain.Entities;
 using Bookshelf.Infrastructure.Persistence;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace Bookshelf.UnitTests.Infrastructure;
 
@@ -25,8 +26,8 @@ public sealed class TestDatabase : IDisposable
 
     public AppDbContext Context { get; }
 
-    public AppDbContext CreateContext() =>
-        new(new DbContextOptionsBuilder<AppDbContext>().UseSqlite(connection).Options);
+    public AppDbContext CreateContext(params IInterceptor[] interceptors) =>
+        new(new DbContextOptionsBuilder<AppDbContext>().UseSqlite(connection).AddInterceptors(interceptors).Options);
 
     public Author AddAuthor(string fullName = "George Orwell") =>
         Add(new Author { FullName = fullName });

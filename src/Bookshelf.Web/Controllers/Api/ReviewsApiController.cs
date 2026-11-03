@@ -1,10 +1,12 @@
 using Bookshelf.Application.Reviews;
 using Bookshelf.Web.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OutputCaching;
 
 namespace Bookshelf.Web.Controllers.Api;
 
 [ApiController]
+[OutputCache(PolicyName = ApiOutputCache.Reviews)]
 [Route("api/reviews")]
 public class ReviewsApiController(IReviewService reviewService) : ControllerBase
 {
