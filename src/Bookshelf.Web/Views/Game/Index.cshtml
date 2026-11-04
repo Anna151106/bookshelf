@@ -1,0 +1,11 @@
+@{
+    ViewData["Title"] = "Гра";
+}
+
+<h1 class="h3 mb-3">Лови книги</h1>
+
+<canvas id="gameCanvas" width="400" height="500" class="border"></canvas>
+
+@section Scripts {
+    <script type="module" src="~/js/game/game.js" asp-append-version="true"></script>
+}

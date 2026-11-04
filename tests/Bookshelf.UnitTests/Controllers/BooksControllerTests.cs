@@ -25,13 +25,13 @@ public class BooksControllerTests
 
     private readonly Mock<IBookService> books = new();
     private readonly Mock<IAuthorService> authors = new();
+    private readonly Mock<IGenreService> genres = new();
     private readonly BooksController controller;
 
     public BooksControllerTests()
     {
         authors.Setup(s => s.GetAllAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync([new AuthorListDto(1, "George Orwell", "UK", 1903, 1)]);
-        var genres = new Mock<IGenreService>();
         genres.Setup(s => s.GetAllAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync([new GenreListDto(1, "Dystopia", 1)]);
 
@@ -95,15 +95,20 @@ public class BooksControllerTests
     }
 
     [Fact]
-    public async Task Create_ValidationError_ReturnsViewWithDropdowns()
+    public async Task Create_ValidationError_ReturnsViewWithSelectedNames()
     {
+        authors.Setup(s => s.GetByIdAsync(1, Ct))
+            .ReturnsAsync(Result<AuthorDetailsDto>.Success(new AuthorDetailsDto(1, "George Orwell", null, 1903, "UK", [])));
+        genres.Setup(s => s.GetByIdAsync(1, Ct))
+            .ReturnsAsync(Result<GenreDetailsDto>.Success(new GenreDetailsDto(1, "Dystopia", [])));
         books.Setup(s => s.CreateAsync(It.IsAny<CreateBookDto>(), Ct))
             .ReturnsAsync(Result<int>.Invalid(ControllerTestExtensions.Errors("Isbn", "Книга з таким ISBN уже є.")));
 
         var result = await controller.Create(BookForm(), Ct);
 
         var model = result.Should().BeOfType<ViewResult>().Which.Model.Should().BeOfType<BookFormViewModel>().Subject;
-        model.Authors.Should().NotBeEmpty();
+        model.AuthorName.Should().Be("George Orwell");
+        model.GenreName.Should().Be("Dystopia");
         controller.ModelState["Isbn"]!.Errors.Should().ContainSingle();
     }
 

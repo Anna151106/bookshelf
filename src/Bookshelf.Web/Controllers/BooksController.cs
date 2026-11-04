@@ -5,18 +5,21 @@ using Bookshelf.Application.Common;
 using Bookshelf.Application.Genres;
 using Bookshelf.Web.Infrastructure;
 using Bookshelf.Web.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Options;
 
 namespace Bookshelf.Web.Controllers;
 
+[Authorize]
 public class BooksController(
     IBookService bookService,
     IAuthorService authorService,
     IGenreService genreService,
     IOptions<LibraryContactsOptions> contacts) : Controller
 {
+    [AllowAnonymous]
     public async Task<IActionResult> Index(int? genreId, int? authorId, string? search, CancellationToken cancellationToken)
     {
         var filter = new BookFilter { GenreId = genreId, AuthorId = authorId, Search = search };
@@ -32,6 +35,7 @@ public class BooksController(
         });
     }
 
+    [AllowAnonymous]
     public async Task<IActionResult> Details(int id, CancellationToken cancellationToken)
     {
         var result = await bookService.GetByIdAsync(id, cancellationToken);
@@ -52,11 +56,9 @@ public class BooksController(
         });
     }
 
-    public async Task<IActionResult> Create(CancellationToken cancellationToken)
+    public IActionResult Create()
     {
-        var model = new BookFormViewModel();
-        await FillOptionsAsync(model, cancellationToken);
-        return View(model);
+        return View(new BookFormViewModel());
     }
 
     [HttpPost]
@@ -65,7 +67,7 @@ public class BooksController(
     {
         if (!ModelState.IsValid)
         {
-            await FillOptionsAsync(model, cancellationToken);
+            await FillSelectedNamesAsync(model, cancellationToken);
             return View(model);
         }
 
@@ -76,7 +78,7 @@ public class BooksController(
         if (!result.IsSuccess)
         {
             ModelState.AddErrors(result);
-            await FillOptionsAsync(model, cancellationToken);
+            await FillSelectedNamesAsync(model, cancellationToken);
             return View(model);
         }
 
@@ -92,9 +94,7 @@ public class BooksController(
             return NotFound();
         }
 
-        var model = BookFormViewModel.FromDetails(result.Value!);
-        await FillOptionsAsync(model, cancellationToken);
-        return View(model);
+        return View(BookFormViewModel.FromDetails(result.Value!));
     }
 
     [HttpPost]
@@ -103,7 +103,7 @@ public class BooksController(
     {
         if (!ModelState.IsValid)
         {
-            await FillOptionsAsync(model, cancellationToken);
+            await FillSelectedNamesAsync(model, cancellationToken);
             return View(model);
         }
 
@@ -117,7 +117,7 @@ public class BooksController(
                 return NotFound();
             case ResultStatus.ValidationError:
                 ModelState.AddErrors(result);
-                await FillOptionsAsync(model, cancellationToken);
+                await FillSelectedNamesAsync(model, cancellationToken);
                 return View(model);
         }
 
@@ -149,10 +149,17 @@ public class BooksController(
     private static FileUpload? ToFileUpload(IFormFile? file) =>
         file is { Length: > 0 } ? new FileUpload(file.OpenReadStream(), file.FileName) : null;
 
-    private async Task FillOptionsAsync(BookFormViewModel model, CancellationToken cancellationToken)
+    private async Task FillSelectedNamesAsync(BookFormViewModel model, CancellationToken cancellationToken)
     {
-        model.Authors = await AuthorOptionsAsync(cancellationToken);
-        model.Genres = await GenreOptionsAsync(cancellationToken);
+        if (model.AuthorId is { } authorId)
+        {
+            model.AuthorName = (await authorService.GetByIdAsync(authorId, cancellationToken)).Value?.FullName;
+        }
+
+        if (model.GenreId is { } genreId)
+        {
+            model.GenreName = (await genreService.GetByIdAsync(genreId, cancellationToken)).Value?.Name;
+        }
     }
 
     private async Task<IEnumerable<SelectListItem>> AuthorOptionsAsync(CancellationToken cancellationToken) =>

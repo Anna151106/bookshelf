@@ -1,0 +1,87 @@
+@{
+    ViewData["Title"] = "Статистика";
+}
+
+<h1 class="h3 mb-3">Статистика</h1>
+
+<div id="statsError" class="alert alert-danger d-none">Не вдалося завантажити статистику.</div>
+
+<div class="row g-4">
+    <div class="col-12 col-lg-6">
+        <div class="card h-100">
+            <div class="card-body">
+                <h2 class="h5 card-title">Книги за жанрами</h2>
+                <div class="chart-container">
+                    <canvas id="genreChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-lg-6">
+        <div class="card h-100">
+            <div class="card-body">
+                <h2 class="h5 card-title">Книги за десятиліттями видання</h2>
+                <div class="chart-container">
+                    <canvas id="decadeChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h2 class="h5 card-title">Середній рейтинг за авторами</h2>
+                <div class="chart-container">
+                    <canvas id="authorChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+    <script>
+        (async () => {
+            const options = { responsive: true, maintainAspectRatio: false };
+            const integerAxis = { y: { beginAtZero: true, ticks: { precision: 0 } } };
+
+            let data;
+            try {
+                const response = await fetch('@Url.Content("~/api/statistics")');
+                if (!response.ok) throw new Error(response.statusText);
+                data = await response.json();
+            } catch {
+                document.getElementById('statsError').classList.remove('d-none');
+                return;
+            }
+
+            new Chart(document.getElementById('genreChart'), {
+                type: 'pie',
+                data: {
+                    labels: data.booksByGenre.map(x => x.genre),
+                    datasets: [{ data: data.booksByGenre.map(x => x.bookCount) }]
+                },
+                options: { ...options, plugins: { legend: { position: 'bottom' } } }
+            });
+
+            new Chart(document.getElementById('decadeChart'), {
+                type: 'bar',
+                data: {
+                    labels: data.booksByDecade.map(x => `${x.decade}-ті`),
+                    datasets: [{ label: 'Кількість книг', data: data.booksByDecade.map(x => x.bookCount) }]
+                },
+                options: { ...options, scales: integerAxis, plugins: { legend: { display: false } } }
+            });
+
+            new Chart(document.getElementById('authorChart'), {
+                type: 'bar',
+                data: {
+                    labels: data.averageRatingByAuthor.map(x => x.author),
+                    datasets: [{ label: 'Середній рейтинг', data: data.averageRatingByAuthor.map(x => x.averageRating) }]
+                },
+                options: { ...options, scales: { y: { min: 0, max: 5 } }, plugins: { legend: { display: false } } }
+            });
+        })();
+    </script>
+}

@@ -1,0 +1,9 @@
+@model (int? Id, string? Text)
+@if (Model.Id is { } id && Model.Text is not null)
+{
+    <option value="@id" selected>@Model.Text</option>
+}
+else
+{
+    <option value=""></option>
+}

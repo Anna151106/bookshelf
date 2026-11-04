@@ -1,11 +1,17 @@
 using System.Globalization;
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
+using System.Security.Claims;
 using Bookshelf.Application;
+using Bookshelf.Application.Users;
 using Bookshelf.Infrastructure;
 using Bookshelf.Infrastructure.Persistence;
 using Bookshelf.Web.Infrastructure;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Localization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.FeatureManagement;
 using Microsoft.Extensions.WebEncoders;
 using Scalar.AspNetCore;
 
@@ -29,6 +35,45 @@ builder.Services.AddApiOutputCache(builder.Configuration);
 builder.Services.AddProblemDetails();
 builder.Services.AddOpenApi();
 builder.Services.AddApplication();
+
+var googleClientId = builder.Configuration["Authentication:Google:ClientId"];
+var googleClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+var googleEnabled = !string.IsNullOrEmpty(googleClientId) && !string.IsNullOrEmpty(googleClientSecret);
+
+var authentication = builder.Services
+    .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options => options.LoginPath = "/Account/Login");
+
+if (googleEnabled)
+{
+    authentication.AddGoogle(options =>
+    {
+        options.ClientId = googleClientId!;
+        options.ClientSecret = googleClientSecret!;
+        options.Events.OnCreatingTicket = async context =>
+        {
+            var email = context.Principal!.FindFirstValue(ClaimTypes.Email)!;
+            var name = context.Principal!.FindFirstValue(ClaimTypes.Name) ?? email;
+            var users = context.HttpContext.RequestServices.GetRequiredService<IUserService>();
+            var user = await users.FindOrCreateAsync(email, name, context.HttpContext.RequestAborted);
+            context.Identity!.AddClaim(new Claim(PlanFilter.ClaimType, user.Plan));
+        };
+    });
+}
+
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddFeatureManagement()
+    .AddFeatureFilter<PlanFilter>()
+    .UseDisabledFeaturesHandler((_, context) =>
+        context.Result = new ViewResult { ViewName = "~/Views/Premium/Unavailable.cshtml", StatusCode = StatusCodes.Status403Forbidden });
+
+builder.Services.AddAuthorization(options =>
+{
+    if (!googleEnabled)
+    {
+        options.DefaultPolicy = new AuthorizationPolicyBuilder().RequireAssertion(_ => true).Build();
+    }
+});
 builder.Services.AddInfrastructure(builder.Configuration);
 
 var app = builder.Build();
@@ -64,6 +109,7 @@ app.UseStaticFiles();
 app.UseRouting();
 app.UseOutputCache();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 if (app.Environment.IsDevelopment())

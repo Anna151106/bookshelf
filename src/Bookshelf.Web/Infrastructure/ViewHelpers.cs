@@ -10,6 +10,12 @@ public static class ViewHelpers
     public static string CoverUrl(this IUrlHelper url, string? coverPath) =>
         url.Content(coverPath is null ? NoCoverPath : "~/" + coverPath);
 
+    public static string MetaDescription(string text, int maxLength = 160)
+    {
+        var clean = string.Join(" ", text.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries));
+        return clean.Length <= maxLength ? clean : clean[..(maxLength - 1)].TrimEnd() + "…";
+    }
+
     public static string Stars(int rating) =>
         new string('★', rating) + new string('☆', Review.MaxRating - rating);
 }

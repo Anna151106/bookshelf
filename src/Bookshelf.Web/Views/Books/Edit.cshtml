@@ -3,6 +3,10 @@
     ViewData["Title"] = "Редагування книги";
 }
 
+@section Styles {
+    <partial name="_AutocompleteStyles" />
+}
+
 <h1 class="h3 mb-3">Редагування книги</h1>
 
 <form asp-action="Edit" method="post" enctype="multipart/form-data" class="col-lg-9">
@@ -11,3 +15,8 @@
     <button type="submit" class="btn btn-primary">Зберегти</button>
     <a class="btn btn-link" asp-action="Details" asp-route-id="@ViewContext.RouteData.Values["id"]">Скасувати</a>
 </form>
+
+@section Scripts {
+    <partial name="_AutocompleteScripts" />
+    <script src="~/js/cover-upload.js" asp-append-version="true"></script>
+}

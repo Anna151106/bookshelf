@@ -30,4 +30,6 @@ public class Book
     public Genre Genre { get; set; } = null!;
 
     public ICollection<Review> Reviews { get; set; } = new List<Review>();
+
+    public ICollection<Library> Libraries { get; set; } = new List<Library>();
 }

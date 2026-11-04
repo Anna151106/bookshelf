@@ -52,6 +52,24 @@ public class BookService(
         return page.Map(b => b.ToListDto());
     }
 
+    public async Task<IReadOnlyList<LookupItemDto>> SearchAsync(string? query, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(query))
+        {
+            return [];
+        }
+
+        var term = query.Trim().ToLower();
+        return await db.Books
+            .AsNoTracking()
+            .Where(b => b.Title.ToLower().Contains(term))
+            .OrderBy(b => b.Title)
+            .ThenBy(b => b.Id)
+            .Take(Lookup.MaxResults)
+            .Select(b => new LookupItemDto(b.Id, b.Title))
+            .ToListAsync(cancellationToken);
+    }
+
     public async Task<Result<BookDetailsDto>> GetByIdAsync(int id, CancellationToken cancellationToken = default)
     {
         var book = await db.Books

@@ -18,3 +18,36 @@ html {
     color: #f0ad4e;
     letter-spacing: 0.05em;
 }
+
+.chart-container {
+    position: relative;
+    height: 320px;
+}
+
+@media (max-width: 575.98px) {
+    .chart-container {
+        height: 260px;
+    }
+}
+
+.cover-drop {
+    border: 2px dashed #adb5bd;
+    background-color: #f8f9fa;
+    transition: border-color 0.15s, background-color 0.15s;
+}
+
+.cover-drop.is-dragover {
+    border-color: #0d6efd;
+    background-color: #e7f1ff;
+}
+
+.library-map {
+    height: 70vh;
+    min-height: 320px;
+}
+
+@media (max-width: 575.98px) {
+    .library-map {
+        height: 60vh;
+    }
+}

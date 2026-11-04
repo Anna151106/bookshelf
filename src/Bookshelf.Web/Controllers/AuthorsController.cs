@@ -2,17 +2,21 @@ using Bookshelf.Application.Authors;
 using Bookshelf.Application.Common;
 using Bookshelf.Web.Infrastructure;
 using Bookshelf.Web.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Bookshelf.Web.Controllers;
 
+[Authorize]
 public class AuthorsController(IAuthorService authorService) : Controller
 {
+    [AllowAnonymous]
     public async Task<IActionResult> Index(CancellationToken cancellationToken)
     {
         return View(await authorService.GetAllAsync(cancellationToken));
     }
 
+    [AllowAnonymous]
     public async Task<IActionResult> Details(int id, CancellationToken cancellationToken)
     {
         var result = await authorService.GetByIdAsync(id, cancellationToken);

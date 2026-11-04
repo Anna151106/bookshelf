@@ -2,17 +2,21 @@ using Bookshelf.Application.Genres;
 using Bookshelf.Application.Common;
 using Bookshelf.Web.Infrastructure;
 using Bookshelf.Web.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Bookshelf.Web.Controllers;
 
+[Authorize]
 public class GenresController(IGenreService genreService) : Controller
 {
+    [AllowAnonymous]
     public async Task<IActionResult> Index(CancellationToken cancellationToken)
     {
         return View(await genreService.GetAllAsync(cancellationToken));
     }
 
+    [AllowAnonymous]
     public async Task<IActionResult> Details(int id, CancellationToken cancellationToken)
     {
         var result = await genreService.GetByIdAsync(id, cancellationToken);

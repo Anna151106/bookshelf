@@ -3,6 +3,10 @@
     ViewData["Title"] = "Новий відгук";
 }
 
+@section Styles {
+    <partial name="_AutocompleteStyles" />
+}
+
 <h1 class="h3 mb-3">Новий відгук</h1>
 
 <form asp-action="Create" method="post" class="col-lg-6">
@@ -10,3 +14,7 @@
     <button type="submit" class="btn btn-primary">Надіслати</button>
     <a class="btn btn-link" asp-controller="Books" asp-action="Details" asp-route-id="@Model.BookId">Скасувати</a>
 </form>
+
+@section Scripts {
+    <partial name="_AutocompleteScripts" />
+}

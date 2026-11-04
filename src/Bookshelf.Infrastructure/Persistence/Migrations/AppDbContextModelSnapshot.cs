@@ -22,6 +22,42 @@ namespace Bookshelf.Infrastructure.Persistence.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("Bookshelf.Domain.Entities.AppUser", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("Plan")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasDefaultValue("Free");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.ToTable("Users", (string)null);
+                });
+
             modelBuilder.Entity("Bookshelf.Domain.Entities.Author", b =>
                 {
                     b.Property<int>("Id")
@@ -323,6 +359,314 @@ namespace Bookshelf.Infrastructure.Persistence.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Bookshelf.Domain.Entities.Library", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)");
+
+                    b.Property<string>("District")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<double>("Latitude")
+                        .HasColumnType("double precision");
+
+                    b.Property<double>("Longitude")
+                        .HasColumnType("double precision");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("District");
+
+                    b.ToTable("Libraries");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Address = "вул. Велика Васильківська, 12",
+                            District = "Печерський",
+                            Latitude = 50.438000000000002,
+                            Longitude = 30.521000000000001,
+                            Name = "Бібліотека №1"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Address = "вул. Лаврська, 9",
+                            District = "Печерський",
+                            Latitude = 50.433999999999997,
+                            Longitude = 30.556000000000001,
+                            Name = "Бібліотека на Печерську"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Address = "бул. Дружби Народів, 21",
+                            District = "Печерський",
+                            Latitude = 50.417999999999999,
+                            Longitude = 30.539999999999999,
+                            Name = "Бібліотека №2"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Address = "вул. Сагайдачного, 25",
+                            District = "Подільський",
+                            Latitude = 50.463999999999999,
+                            Longitude = 30.518999999999998,
+                            Name = "Бібліотека на Подолі"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Address = "вул. Костянтинівська, 40",
+                            District = "Подільський",
+                            Latitude = 50.469999999999999,
+                            Longitude = 30.506,
+                            Name = "Бібліотека №3"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Address = "просп. Правди, 31",
+                            District = "Подільський",
+                            Latitude = 50.509999999999998,
+                            Longitude = 30.43,
+                            Name = "Бібліотека на Виноградарі"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Address = "вул. Богдана Хмельницького, 28",
+                            District = "Шевченківський",
+                            Latitude = 50.445999999999998,
+                            Longitude = 30.513000000000002,
+                            Name = "Бібліотека №4"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Address = "вул. Мельникова, 18",
+                            District = "Шевченківський",
+                            Latitude = 50.460999999999999,
+                            Longitude = 30.478999999999999,
+                            Name = "Бібліотека біля Лук'янівки"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Address = "вул. Дегтярівська, 33",
+                            District = "Шевченківський",
+                            Latitude = 50.456000000000003,
+                            Longitude = 30.457999999999998,
+                            Name = "Бібліотека №5"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            Address = "просп. Оболонський, 16",
+                            District = "Оболонський",
+                            Latitude = 50.505000000000003,
+                            Longitude = 30.498000000000001,
+                            Name = "Бібліотека на Оболоні"
+                        },
+                        new
+                        {
+                            Id = 11,
+                            Address = "вул. Героїв Сталінграду, 44",
+                            District = "Оболонський",
+                            Latitude = 50.515999999999998,
+                            Longitude = 30.501000000000001,
+                            Name = "Бібліотека №6"
+                        },
+                        new
+                        {
+                            Id = 12,
+                            Address = "просп. Володимира Івасюка, 8",
+                            District = "Оболонський",
+                            Latitude = 50.505000000000003,
+                            Longitude = 30.472999999999999,
+                            Name = "Бібліотека на Мінському масиві"
+                        },
+                        new
+                        {
+                            Id = 13,
+                            Address = "вул. Пирогівський шлях, 30",
+                            District = "Голосіївський",
+                            Latitude = 50.380000000000003,
+                            Longitude = 30.5,
+                            Name = "Бібліотека №7"
+                        },
+                        new
+                        {
+                            Id = 14,
+                            Address = "просп. Академіка Глушкова, 45",
+                            District = "Голосіївський",
+                            Latitude = 50.368000000000002,
+                            Longitude = 30.459,
+                            Name = "Бібліотека на Теремках"
+                        },
+                        new
+                        {
+                            Id = 15,
+                            Address = "просп. Голосіївський, 70",
+                            District = "Голосіївський",
+                            Latitude = 50.395000000000003,
+                            Longitude = 30.515000000000001,
+                            Name = "Бібліотека №8"
+                        },
+                        new
+                        {
+                            Id = 16,
+                            Address = "вул. Солом'янська, 7",
+                            District = "Солом'янський",
+                            Latitude = 50.435000000000002,
+                            Longitude = 30.48,
+                            Name = "Бібліотека на Солом'янці"
+                        },
+                        new
+                        {
+                            Id = 17,
+                            Address = "просп. Повітрофлотський, 50",
+                            District = "Солом'янський",
+                            Latitude = 50.438000000000002,
+                            Longitude = 30.449999999999999,
+                            Name = "Бібліотека №9"
+                        },
+                        new
+                        {
+                            Id = 18,
+                            Address = "просп. Відрадний, 14",
+                            District = "Солом'янський",
+                            Latitude = 50.43,
+                            Longitude = 30.427,
+                            Name = "Бібліотека на Відрадному"
+                        },
+                        new
+                        {
+                            Id = 19,
+                            Address = "просп. Перемоги, 98",
+                            District = "Святошинський",
+                            Latitude = 50.456000000000003,
+                            Longitude = 30.387,
+                            Name = "Бібліотека на Борщагівці"
+                        },
+                        new
+                        {
+                            Id = 20,
+                            Address = "вул. Якуба Коласа, 11",
+                            District = "Святошинський",
+                            Latitude = 50.439999999999998,
+                            Longitude = 30.370000000000001,
+                            Name = "Бібліотека №10"
+                        },
+                        new
+                        {
+                            Id = 21,
+                            Address = "бул. Академіка Вернадського, 63",
+                            District = "Святошинський",
+                            Latitude = 50.465000000000003,
+                            Longitude = 30.355,
+                            Name = "Бібліотека на Академмістечку"
+                        },
+                        new
+                        {
+                            Id = 22,
+                            Address = "бул. Верховної Ради, 26",
+                            District = "Дніпровський",
+                            Latitude = 50.451999999999998,
+                            Longitude = 30.605,
+                            Name = "Бібліотека на Лівому березі"
+                        },
+                        new
+                        {
+                            Id = 23,
+                            Address = "вул. Райдужна, 33",
+                            District = "Дніпровський",
+                            Latitude = 50.472000000000001,
+                            Longitude = 30.594999999999999,
+                            Name = "Бібліотека №11"
+                        },
+                        new
+                        {
+                            Id = 24,
+                            Address = "вул. Березняківська, 12",
+                            District = "Дніпровський",
+                            Latitude = 50.424999999999997,
+                            Longitude = 30.614999999999998,
+                            Name = "Бібліотека на Березняках"
+                        },
+                        new
+                        {
+                            Id = 25,
+                            Address = "просп. Петра Григоренка, 22",
+                            District = "Дарницький",
+                            Latitude = 50.395000000000003,
+                            Longitude = 30.638000000000002,
+                            Name = "Бібліотека на Позняках"
+                        },
+                        new
+                        {
+                            Id = 26,
+                            Address = "вул. Ревуцького, 9",
+                            District = "Дарницький",
+                            Latitude = 50.402999999999999,
+                            Longitude = 30.655000000000001,
+                            Name = "Бібліотека №12"
+                        },
+                        new
+                        {
+                            Id = 27,
+                            Address = "вул. Колекторна, 19",
+                            District = "Дарницький",
+                            Latitude = 50.392000000000003,
+                            Longitude = 30.614999999999998,
+                            Name = "Бібліотека на Осокорках"
+                        },
+                        new
+                        {
+                            Id = 28,
+                            Address = "просп. Червоної Калини, 30",
+                            District = "Деснянський",
+                            Latitude = 50.512999999999998,
+                            Longitude = 30.605,
+                            Name = "Бібліотека на Троєщині"
+                        },
+                        new
+                        {
+                            Id = 29,
+                            Address = "вул. Лісківська, 4",
+                            District = "Деснянський",
+                            Latitude = 50.497999999999998,
+                            Longitude = 30.629999999999999,
+                            Name = "Бібліотека №13"
+                        },
+                        new
+                        {
+                            Id = 30,
+                            Address = "просп. Лісовий, 23",
+                            District = "Деснянський",
+                            Latitude = 50.478000000000002,
+                            Longitude = 30.645,
+                            Name = "Бібліотека на Лісовому"
+                        });
+                });
+
             modelBuilder.Entity("Bookshelf.Domain.Entities.Review", b =>
                 {
                     b.Property<int>("Id")
@@ -538,6 +882,21 @@ namespace Bookshelf.Infrastructure.Persistence.Migrations
                         });
                 });
 
+            modelBuilder.Entity("LibraryBooks", b =>
+                {
+                    b.Property<int>("LibraryId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("BookId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("LibraryId", "BookId");
+
+                    b.HasIndex("BookId");
+
+                    b.ToTable("LibraryBooks");
+                });
+
             modelBuilder.Entity("Bookshelf.Domain.Entities.Book", b =>
                 {
                     b.HasOne("Bookshelf.Domain.Entities.Author", "Author")
@@ -566,6 +925,21 @@ namespace Bookshelf.Infrastructure.Persistence.Migrations
                         .IsRequired();
 
                     b.Navigation("Book");
+                });
+
+            modelBuilder.Entity("LibraryBooks", b =>
+                {
+                    b.HasOne("Bookshelf.Domain.Entities.Book", null)
+                        .WithMany()
+                        .HasForeignKey("BookId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Bookshelf.Domain.Entities.Library", null)
+                        .WithMany()
+                        .HasForeignKey("LibraryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Bookshelf.Domain.Entities.Author", b =>

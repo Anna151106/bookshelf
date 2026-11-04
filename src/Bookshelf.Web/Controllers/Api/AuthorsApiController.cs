@@ -19,6 +19,11 @@ public class AuthorsApiController(IAuthorService authorService) : ControllerBase
         return PagedResponse.From(page, query, Request);
     }
 
+    [HttpGet("search")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<Select2Response> Search([FromQuery] string? q, CancellationToken cancellationToken) =>
+        new(await authorService.SearchAsync(q, cancellationToken));
+
     [HttpGet("{id:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]

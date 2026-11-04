@@ -2,7 +2,6 @@ using System.ComponentModel.DataAnnotations;
 using Bookshelf.Application.Abstractions;
 using Bookshelf.Application.Books;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
-using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Bookshelf.Web.ViewModels;
 
@@ -36,10 +35,10 @@ public class BookFormViewModel
     public string? CurrentCoverPath { get; set; }
 
     [ValidateNever]
-    public IEnumerable<SelectListItem> Authors { get; set; } = [];
+    public string? AuthorName { get; set; }
 
     [ValidateNever]
-    public IEnumerable<SelectListItem> Genres { get; set; } = [];
+    public string? GenreName { get; set; }
 
     public static BookFormViewModel FromDetails(BookDetailsDto book) => new()
     {
@@ -50,6 +49,8 @@ public class BookFormViewModel
         Pages = book.Pages,
         AuthorId = book.AuthorId,
         GenreId = book.GenreId,
+        AuthorName = book.AuthorName,
+        GenreName = book.GenreName,
         CurrentCoverPath = book.CoverPath,
     };
 

@@ -1,0 +1,30 @@
+@model Bookshelf.Application.Users.AppUserDto
+@{
+    ViewData["Title"] = "Профіль";
+}
+
+<h1 class="h3 mb-3">Профіль</h1>
+
+<dl class="row">
+    <dt class="col-sm-3">Ім'я</dt>
+    <dd class="col-sm-9">@Model.Name</dd>
+    <dt class="col-sm-3">Email</dt>
+    <dd class="col-sm-9">@Model.Email</dd>
+    <dt class="col-sm-3">Дата реєстрації</dt>
+    <dd class="col-sm-9">@Model.CreatedAt.ToLocalTime().ToString("d MMMM yyyy")</dd>
+    <dt class="col-sm-3">План</dt>
+    <dd class="col-sm-9">@Model.Plan</dd>
+</dl>
+
+<form asp-action="ChangePlan" method="post">
+    @if (Model.Plan == Bookshelf.Domain.Entities.AppUser.PremiumPlan)
+    {
+        <input type="hidden" name="plan" value="@Bookshelf.Domain.Entities.AppUser.FreePlan" />
+        <button type="submit" class="btn btn-outline-secondary">Повернутися на Free</button>
+    }
+    else
+    {
+        <input type="hidden" name="plan" value="@Bookshelf.Domain.Entities.AppUser.PremiumPlan" />
+        <button type="submit" class="btn btn-warning">Перейти на Premium</button>
+    }
+</form>

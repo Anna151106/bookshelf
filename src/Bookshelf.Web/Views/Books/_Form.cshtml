@@ -10,15 +10,15 @@
 <div class="row">
     <div class="col-md-6 mb-3">
         <label asp-for="AuthorId" class="form-label"></label>
-        <select asp-for="AuthorId" asp-items="Model.Authors" class="form-select">
-            <option value="">Оберіть автора</option>
+        <select asp-for="AuthorId" class="form-select" data-autocomplete-url="@Url.Content("~/api/authors/search")" data-placeholder="Почніть вводити ім'я автора">
+            <partial name="_AutocompleteOption" model="(Model.AuthorId, Model.AuthorName)" />
         </select>
         <span asp-validation-for="AuthorId" class="text-danger small"></span>
     </div>
     <div class="col-md-6 mb-3">
         <label asp-for="GenreId" class="form-label"></label>
-        <select asp-for="GenreId" asp-items="Model.Genres" class="form-select">
-            <option value="">Оберіть жанр</option>
+        <select asp-for="GenreId" class="form-select" data-autocomplete-url="@Url.Content("~/api/genres/search")" data-placeholder="Почніть вводити назву жанру">
+            <partial name="_AutocompleteOption" model="(Model.GenreId, Model.GenreName)" />
         </select>
         <span asp-validation-for="GenreId" class="text-danger small"></span>
     </div>
@@ -45,13 +45,22 @@
     <textarea asp-for="Description" class="form-control" rows="5"></textarea>
     <span asp-validation-for="Description" class="text-danger small"></span>
 </div>
-<div class="mb-3">
+<div class="mb-3" data-cover-upload>
     <label asp-for="Cover" class="form-label"></label>
     <div class="d-flex gap-3 align-items-start">
-        <img src="@Url.CoverUrl(Model.CurrentCoverPath)" class="book-cover book-cover-sm rounded" alt="Поточна обкладинка" />
+        <img src="@Url.CoverUrl(Model.CurrentCoverPath)" class="book-cover book-cover-sm rounded" alt="Обкладинка" data-cover-preview />
         <div class="flex-grow-1">
-            <input asp-for="Cover" type="file" class="form-control" accept=".jpg,.jpeg,.png,.webp" />
+            <div class="cover-drop rounded p-3 text-center" data-cover-drop>
+                <input asp-for="Cover" type="file" class="d-none" accept=".jpg,.jpeg,.png,.webp" data-cover-input />
+                <div class="mb-2">Перетягніть файл сюди або</div>
+                <button type="button" class="btn btn-outline-primary btn-sm" data-cover-browse>Вибрати файл</button>
+            </div>
+            <div class="d-none mt-2 small d-flex align-items-center gap-2 flex-wrap" data-cover-info>
+                <span class="text-break" data-cover-details></span>
+                <button type="button" class="btn btn-outline-secondary btn-sm" data-cover-clear>Прибрати</button>
+            </div>
             <div class="form-text">JPG, PNG або WEBP, до 5 МБ.@(Model.CurrentCoverPath is not null ? " Нова обкладинка замінить стару." : "")</div>
+            <div class="text-danger small" data-cover-error></div>
             <span asp-validation-for="Cover" class="text-danger small"></span>
         </div>
     </div>

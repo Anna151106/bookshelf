@@ -3,6 +3,10 @@
     ViewData["Title"] = "Нова книга";
 }
 
+@section Styles {
+    <partial name="_AutocompleteStyles" />
+}
+
 <h1 class="h3 mb-3">Нова книга</h1>
 
 <form asp-action="Create" method="post" enctype="multipart/form-data" class="col-lg-9">
@@ -10,3 +14,8 @@
     <button type="submit" class="btn btn-primary">Зберегти</button>
     <a class="btn btn-link" asp-action="Index">Скасувати</a>
 </form>
+
+@section Scripts {
+    <partial name="_AutocompleteScripts" />
+    <script src="~/js/cover-upload.js" asp-append-version="true"></script>
+}

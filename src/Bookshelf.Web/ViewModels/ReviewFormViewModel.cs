@@ -1,11 +1,19 @@
 using System.ComponentModel.DataAnnotations;
 using Bookshelf.Application.Reviews;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace Bookshelf.Web.ViewModels;
 
 public class ReviewFormViewModel
 {
+    [Display(Name = "Книга")]
     public int BookId { get; set; }
+
+    [ValidateNever]
+    public string? BookTitle { get; set; }
+
+    [ValidateNever]
+    public bool CanChooseBook { get; set; }
 
     [Display(Name = "Ваше ім'я")]
     public string ReaderName { get; set; } = string.Empty;
@@ -19,6 +27,7 @@ public class ReviewFormViewModel
     public static ReviewFormViewModel FromDetails(ReviewDto review) => new()
     {
         BookId = review.BookId,
+        BookTitle = review.BookTitle,
         ReaderName = review.ReaderName,
         Rating = review.Rating,
         Text = review.Text,

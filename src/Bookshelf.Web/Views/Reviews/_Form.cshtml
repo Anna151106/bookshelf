@@ -3,8 +3,28 @@
 
 <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
 
-<input type="hidden" asp-for="BookId" />
-<span asp-validation-for="BookId" class="text-danger small d-block"></span>
+@if (Model.CanChooseBook)
+{
+    <div class="mb-3">
+        <label asp-for="BookId" class="form-label"></label>
+        <select asp-for="BookId" class="form-select" data-autocomplete-url="@Url.Content("~/api/books/search")" data-placeholder="Почніть вводити назву книги">
+            <partial name="_AutocompleteOption" model="(Model.BookId > 0 ? Model.BookId : (int?)null, Model.BookTitle)" />
+        </select>
+        <span asp-validation-for="BookId" class="text-danger small"></span>
+    </div>
+}
+else
+{
+    <input type="hidden" asp-for="BookId" />
+    @if (Model.BookTitle is not null)
+    {
+        <div class="mb-3">
+            <label asp-for="BookId" class="form-label"></label>
+            <input class="form-control" value="@Model.BookTitle" readonly />
+        </div>
+    }
+    <span asp-validation-for="BookId" class="text-danger small d-block"></span>
+}
 
 <div class="mb-3">
     <label asp-for="ReaderName" class="form-label"></label>

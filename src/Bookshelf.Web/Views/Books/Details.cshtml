@@ -3,8 +3,33 @@
     var book = Model.Book;
     var author = Model.Author;
     var contacts = Model.Contacts;
-    ViewData["Title"] = book.Title;
+    ViewData["Title"] = $"{book.Title} - {book.AuthorName}";
     Layout = "_LandingLayout";
+
+    var description = ViewHelpers.MetaDescription(book.Description ?? $"{book.Title} - книга, автор {book.AuthorName}, {book.PublishedYear} рік.");
+    var siteUrl = $"{Context.Request.Scheme}://{Context.Request.Host}";
+    var pageUrl = siteUrl + Url.Action("Details", "Books", new { id = book.Id });
+    var imageUrl = siteUrl + Url.CoverUrl(book.CoverPath);
+    var jsonLd = System.Text.Json.JsonSerializer.Serialize(new Dictionary<string, object>
+    {
+        ["@context"] = "https://schema.org",
+        ["@type"] = "Book",
+        ["name"] = book.Title,
+        ["author"] = new Dictionary<string, string> { ["@type"] = "Person", ["name"] = book.AuthorName },
+        ["isbn"] = book.Isbn,
+        ["datePublished"] = book.PublishedYear.ToString(),
+    });
+}
+
+@section Head {
+    <meta name="description" content="@description" />
+    <link rel="canonical" href="@pageUrl" />
+    <meta property="og:type" content="book" />
+    <meta property="og:title" content="@book.Title - @book.AuthorName" />
+    <meta property="og:description" content="@description" />
+    <meta property="og:image" content="@imageUrl" />
+    <meta property="og:url" content="@pageUrl" />
+    <script type="application/ld+json">@Html.Raw(jsonLd)</script>
 }
 
 @section Navigation {

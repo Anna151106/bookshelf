@@ -1,0 +1,30 @@
+@model IReadOnlyList<BookPickViewModel>
+@{
+    ViewData["Title"] = "Добірка";
+}
+
+<h1 class="h3 mb-3">Добірка ⭐</h1>
+<p class="text-muted">5 книг з найвищою середньою оцінкою читачів.</p>
+
+@if (Model.Count == 0)
+{
+    <p class="text-muted">Ще немає оцінених книг.</p>
+}
+else
+{
+    <ol class="list-group list-group-numbered">
+        @foreach (var pick in Model)
+        {
+            <li class="list-group-item d-flex justify-content-between align-items-start gap-2">
+                <div class="ms-2 me-auto">
+                    <a class="fw-bold" asp-controller="Books" asp-action="Details" asp-route-id="@pick.Book.Id">@pick.Book.Title</a>
+                    <div class="small text-muted">@pick.Book.AuthorName</div>
+                </div>
+                <span class="text-nowrap">
+                    <span class="rating">@ViewHelpers.Stars((int)Math.Round(pick.AverageRating))</span>
+                    @pick.AverageRating.ToString("0.0") (@pick.ReviewCount)
+                </span>
+            </li>
+        }
+    </ol>
+}

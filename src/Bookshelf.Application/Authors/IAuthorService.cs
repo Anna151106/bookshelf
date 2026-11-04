@@ -8,6 +8,8 @@ public interface IAuthorService
 
     Task<PagedList<AuthorListDto>> GetPageAsync(int skip, int limit, CancellationToken cancellationToken = default);
 
+    Task<IReadOnlyList<LookupItemDto>> SearchAsync(string? query, CancellationToken cancellationToken = default);
+
     Task<Result<AuthorDetailsDto>> GetByIdAsync(int id, CancellationToken cancellationToken = default);
 
     Task<Result<int>> CreateAsync(CreateAuthorDto dto, CancellationToken cancellationToken = default);

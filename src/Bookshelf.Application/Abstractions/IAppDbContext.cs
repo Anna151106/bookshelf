@@ -13,5 +13,9 @@ public interface IAppDbContext
 
     DbSet<Review> Reviews { get; }
 
+    DbSet<Library> Libraries { get; }
+
+    DbSet<AppUser> Users { get; }
+
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

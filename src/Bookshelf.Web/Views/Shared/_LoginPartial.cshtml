@@ -1,0 +1,16 @@
+@using Microsoft.AspNetCore.Authentication
+@inject IAuthenticationSchemeProvider Schemes
+
+@if (User.Identity?.IsAuthenticated == true)
+{
+    <div class="d-flex align-items-center gap-2">
+        <a class="nav-link text-light" asp-controller="Account" asp-action="Profile">@User.Identity.Name</a>
+        <form asp-controller="Account" asp-action="Logout" method="post" class="m-0">
+            <button type="submit" class="btn btn-sm btn-outline-light">Вийти</button>
+        </form>
+    </div>
+}
+else if (await Schemes.GetSchemeAsync("Google") is not null)
+{
+    <a class="btn btn-sm btn-outline-light" asp-controller="Account" asp-action="Login">Увійти через Google</a>
+}

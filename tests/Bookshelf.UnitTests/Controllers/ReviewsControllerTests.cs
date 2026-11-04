@@ -1,3 +1,4 @@
+using Bookshelf.Application.Books;
 using Bookshelf.Application.Common;
 using Bookshelf.Application.Reviews;
 using Bookshelf.Web.Controllers;
@@ -12,11 +13,12 @@ namespace Bookshelf.UnitTests.Controllers;
 public class ReviewsControllerTests
 {
     private readonly Mock<IReviewService> service = new();
+    private readonly Mock<IBookService> books = new();
     private readonly ReviewsController controller;
 
     public ReviewsControllerTests()
     {
-        controller = new ReviewsController(service.Object).WithTempData();
+        controller = new ReviewsController(service.Object, books.Object).WithTempData();
     }
 
     private static CancellationToken Ct => TestContext.Current.CancellationToken;
@@ -34,14 +36,18 @@ public class ReviewsControllerTests
     }
 
     [Fact]
-    public async Task Create_ValidationError_ReturnsView()
+    public async Task Create_ValidationError_ReturnsViewWithSelectedBook()
     {
+        books.Setup(s => s.GetByIdAsync(1, Ct)).ReturnsAsync(Result<BookDetailsDto>.Success(
+            new BookDetailsDto(1, "Animal Farm", null, 1945, "9780306406157", 112, null, 1, "George Orwell", 1, "Dystopia", null, [])));
         service.Setup(s => s.CreateAsync(It.IsAny<CreateReviewDto>(), Ct))
             .ReturnsAsync(Result<int>.Invalid(ControllerTestExtensions.Errors("Rating", "Оцінка має бути від 1 до 5.")));
 
         var result = await controller.Create(new ReviewFormViewModel { BookId = 1, ReaderName = "Olena" }, Ct);
 
-        result.Should().BeOfType<ViewResult>();
+        var model = result.Should().BeOfType<ViewResult>().Which.Model.Should().BeOfType<ReviewFormViewModel>().Subject;
+        model.BookTitle.Should().Be("Animal Farm");
+        model.CanChooseBook.Should().BeTrue();
         controller.ModelState["Rating"]!.Errors.Should().ContainSingle();
     }
 

@@ -1,0 +1,34 @@
+@model MapViewModel
+@{
+    ViewData["Title"] = "Мапа бібліотек";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" />
+}
+
+<h1 class="h3 mb-3">Мапа бібліотек</h1>
+
+<div class="row g-2 mb-3">
+    <div class="col-12 col-sm-6">
+        <label for="filterBook" class="form-label small mb-1">Книга</label>
+        <select id="filterBook" class="form-select" asp-items="Model.Books">
+            <option value="">Усі книги</option>
+        </select>
+    </div>
+    <div class="col-12 col-sm-6">
+        <label for="filterDistrict" class="form-label small mb-1">Район</label>
+        <select id="filterDistrict" class="form-select" asp-items="Model.Districts">
+            <option value="">Усі райони</option>
+        </select>
+    </div>
+</div>
+
+<p class="mb-2">Знайдено бібліотек: <strong id="libraryCount">0</strong></p>
+
+<div id="libraryMap" class="library-map rounded border"></div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="~/js/library-map.js" asp-append-version="true"></script>
+}

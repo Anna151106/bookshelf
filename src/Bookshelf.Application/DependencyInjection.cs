@@ -1,7 +1,10 @@
 using Bookshelf.Application.Authors;
 using Bookshelf.Application.Books;
 using Bookshelf.Application.Genres;
+using Bookshelf.Application.Libraries;
 using Bookshelf.Application.Reviews;
+using Bookshelf.Application.Statistics;
+using Bookshelf.Application.Users;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -19,6 +22,9 @@ public static class DependencyInjection
         services.AddScoped<IGenreService, GenreService>();
         services.AddScoped<IBookService, BookService>();
         services.AddScoped<IReviewService, ReviewService>();
+        services.AddScoped<IStatisticsService, StatisticsService>();
+        services.AddScoped<ILibraryService, LibraryService>();
+        services.AddScoped<IUserService, UserService>();
 
         return services;
     }

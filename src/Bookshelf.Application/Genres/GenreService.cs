@@ -23,6 +23,24 @@ public class GenreService(
         return page.Map(r => r.Genre.ToListDto(r.BookCount));
     }
 
+    public async Task<IReadOnlyList<LookupItemDto>> SearchAsync(string? query, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(query))
+        {
+            return [];
+        }
+
+        var term = query.Trim().ToLower();
+        return await db.Genres
+            .AsNoTracking()
+            .Where(g => g.Name.ToLower().Contains(term))
+            .OrderBy(g => g.Name)
+            .ThenBy(g => g.Id)
+            .Take(Lookup.MaxResults)
+            .Select(g => new LookupItemDto(g.Id, g.Name))
+            .ToListAsync(cancellationToken);
+    }
+
     public async Task<Result<GenreDetailsDto>> GetByIdAsync(int id, CancellationToken cancellationToken = default)
     {
         var genre = await db.Genres

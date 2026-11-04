@@ -18,6 +18,7 @@ public sealed class TestDatabase : IDisposable
         Context = CreateContext();
         Context.Database.EnsureCreated();
 
+        Context.Libraries.ExecuteDelete();
         Context.Reviews.ExecuteDelete();
         Context.Books.ExecuteDelete();
         Context.Authors.ExecuteDelete();
@@ -35,12 +36,12 @@ public sealed class TestDatabase : IDisposable
     public Genre AddGenre(string name = "Dystopia") =>
         Add(new Genre { Name = name });
 
-    public Book AddBook(Author author, Genre genre, string title = "Animal Farm", string isbn = "9780000000019", string? coverPath = null) =>
+    public Book AddBook(Author author, Genre genre, string title = "Animal Farm", string isbn = "9780000000019", string? coverPath = null, int publishedYear = 1945) =>
         Add(new Book
         {
             Title = title,
             Isbn = isbn,
-            PublishedYear = 1945,
+            PublishedYear = publishedYear,
             Pages = 112,
             AuthorId = author.Id,
             GenreId = genre.Id,
@@ -55,6 +56,22 @@ public sealed class TestDatabase : IDisposable
             Rating = rating,
             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc),
         });
+
+    public Library AddLibrary(string name, string district, params Book[] books)
+    {
+        using var context = CreateContext();
+        var library = new Library { Name = name, Address = "вул. Тестова, 1", District = district, Latitude = 50.45, Longitude = 30.52 };
+        foreach (var book in books)
+        {
+            var tracked = new Book { Id = book.Id };
+            context.Books.Attach(tracked);
+            library.Books.Add(tracked);
+        }
+
+        context.Libraries.Add(library);
+        context.SaveChanges();
+        return library;
+    }
 
     public void Dispose()
     {

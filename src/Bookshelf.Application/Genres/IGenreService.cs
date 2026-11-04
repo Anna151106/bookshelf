@@ -8,6 +8,8 @@ public interface IGenreService
 
     Task<PagedList<GenreListDto>> GetPageAsync(int skip, int limit, CancellationToken cancellationToken = default);
 
+    Task<IReadOnlyList<LookupItemDto>> SearchAsync(string? query, CancellationToken cancellationToken = default);
+
     Task<Result<GenreDetailsDto>> GetByIdAsync(int id, CancellationToken cancellationToken = default);
 
     Task<Result<int>> CreateAsync(CreateGenreDto dto, CancellationToken cancellationToken = default);

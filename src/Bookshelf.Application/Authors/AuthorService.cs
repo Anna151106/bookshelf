@@ -23,6 +23,24 @@ public class AuthorService(
         return page.Map(r => r.Author.ToListDto(r.BookCount));
     }
 
+    public async Task<IReadOnlyList<LookupItemDto>> SearchAsync(string? query, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(query))
+        {
+            return [];
+        }
+
+        var term = query.Trim().ToLower();
+        return await db.Authors
+            .AsNoTracking()
+            .Where(a => a.FullName.ToLower().Contains(term))
+            .OrderBy(a => a.FullName)
+            .ThenBy(a => a.Id)
+            .Take(Lookup.MaxResults)
+            .Select(a => new LookupItemDto(a.Id, a.FullName))
+            .ToListAsync(cancellationToken);
+    }
+
     public async Task<Result<AuthorDetailsDto>> GetByIdAsync(int id, CancellationToken cancellationToken = default)
     {
         var author = await db.Authors
